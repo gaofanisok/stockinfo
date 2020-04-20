@@ -32,14 +32,19 @@ public class UserController {
 
 
 
-
-        @RequestMapping(value = "showUser", method = RequestMethod.POST)
-    public Object selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    /**
+     *<pre>
+     * Description  : 查询所有后台用户  <br/>
+     * ChangeLog    : 1. 创建 (2020/4/20 0020 17:29 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/20 0020 17:29
+     *</pre>          
+    */
+    @RequestMapping(value = "showUser", method = RequestMethod.POST)
+    public String selectUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             int pageIndex=RequestUtil.getInt(request,"pageIndex",1);
             int pageSize=RequestUtil.getInt(request,"pageSize",5);
-            String token=request.getHeader("accessToken");
-            System.out.println("-----------------"+Util.getUserId(token));
             String user=userManager.seleuser(pageIndex,pageSize);
             if (StringUtil.isNotEmpty(user)) {
                 return  CommonUtil.toReturnJsonMsg(0, "成功",user);
@@ -53,6 +58,24 @@ public class UserController {
         return CommonUtil.toReturnJsonMsg(-1, "系统繁忙，请重试");
 
     }
+    @RequestMapping(value = "getUserByid", method = RequestMethod.POST)
+    public String getUserByid(HttpServletRequest request){
+        try {
+             String id=RequestUtil.getString(request,"id");
+             String user=userManager.getUserByid(id);
+             if (StringUtil.isNotEmpty(user)){
+                   return CommonUtil.toReturnJsonMsg(0,"查询成功",user);
+              }else {
+                  return CommonUtil.toReturnJsonMsg(1,"查询失败");
+             }
+        } catch (Exception e) {
+            logger.error(e);
+            e.printStackTrace();
+        }
+        return CommonUtil.toReturnJsonMsg(-1,"系统繁忙，请重试");
+
+    }
+
 
 
 }

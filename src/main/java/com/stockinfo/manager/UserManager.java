@@ -59,4 +59,25 @@ public class UserManager {
 
         return js.toString();
     }
+    /**
+     *<pre>
+     * Description  : 查询单个用户  <br/>
+     * ChangeLog    : 1. 创建 (2020/4/20 0020 17:18 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/20 0020 17:18
+     *</pre>          
+    */
+    public String  getUserByid(String id){
+        String sql="select * from stockinfo_userlog where ID_='"+id+"'";
+        List<Map<String,Object>> userList=communalDao.query(sql);
+        if (userList.size()>0){
+            JSONObject jo=new JSONObject();
+            Map<String,Object> map=userList.get(0);
+            jo.put("ID_",map.getOrDefault("ID_",""));
+            jo.put("username",map.getOrDefault("username",""));
+            jo.put("phone",map.getOrDefault("phone",""));
+            return jo.toString();
+        }
+        return "";
+    }
 }
