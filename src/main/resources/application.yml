@@ -1,0 +1,31 @@
+server:
+  port: 9090
+#jdbc
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    #数据库url
+    url: jdbc:mysql://localhost:3306/stockinfo?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&serverTimezone=GMT%2B8&useSSL=false
+    # 数据库访问账户
+    username: root
+    # 数据库访问密码
+    password: 123456
+    dbcp2:                                          # 进行数据库连接池的配置
+      min-idle: 5                                  # 数据库连接池的最小维持连接数
+      initial-size: 5                               # 初始化提供的连接数
+      max-total: 5                                # 最大的连接数
+      max-wait-millis: 60000
+mybatis:
+  typeAliasesPackage: com.stockinfo.entity #实体类包路径
+  mapperLocations: classpath:mapper/*.xml #mapper.xml路径
+
+#分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: false #关闭合理化否则没数据会返回最后一条数据
+    supportMethodsArguments: true
+    params: count=countSql
+
+
+
+
