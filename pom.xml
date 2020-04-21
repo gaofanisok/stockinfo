@@ -8,10 +8,10 @@
         <version>2.2.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.providertwos</groupId>
-    <artifactId>providertwos</artifactId>
+    <groupId>com.stockinfo</groupId>
+    <artifactId>stockinfo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>providertwos</name>
+    <name>stockinfo</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -46,11 +46,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.13</version>
+            <version>8.0.17</version>
         </dependency>
+
+
+
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
