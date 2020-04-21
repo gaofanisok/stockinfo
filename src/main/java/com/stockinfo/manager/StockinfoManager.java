@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.stockinfo.dao.CommunalDao;
 import com.stockinfo.util.PageUtil;
 import com.stockinfo.util.StringUtil;
+import com.stockinfo.util.Util;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @Auther: gaofan
@@ -133,7 +135,7 @@ public class StockinfoManager {
      *</pre>
      */
     public String getInstitutionById(String id){
-        String sql="select * from stockinfo_industrytable  where id_='"+id+"'";
+        String sql="select * from stockinfo_institutionstable  where id_='"+id+"'";
         JSONObject jsRestu=new JSONObject();
         List<Map<String,Object>> stockList=communalDao.query(sql);
         if (stockList.size()>0){
@@ -215,9 +217,24 @@ public class StockinfoManager {
         return jsRestu.toString();
     }
 
-    public String collect(String datajson){
+    /**
+     *<pre>
+     * Description  :收藏数据 <br/>
+     * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/21 0021 14:47
+     *</pre>
+     */
+    public String collect(String datajson,String userid){
         if (StringUtil.isNotEmpty(datajson)){
-
+            String id= UUID.randomUUID().toString();
+            Map<String,Object> datamap = com.alibaba.fastjson.JSONObject.parseObject(datajson);
+            String sql="select * from stockinfo_collect where lx='"+datamap.get("lx")+"' and scid='"+datamap.get("scid")+"' and userid='"+userid+"' ";
+            if (communalDao.query(sql).size()<=0) {
+                String sql2 = "insert into stockinfo_collect value('" + id + "','" + datamap.getOrDefault("lx", "") + "','" + datamap.getOrDefault("scid", "") + "','" +userid+ "','" + Util.newdata() + "')";
+                communalDao.execute(sql2);
+                return id;
+            }
         }
         return "";
     }
