@@ -4,24 +4,18 @@ import com.stockinfo.manager.UserManager;
 import com.stockinfo.util.CommonUtil;
 import com.stockinfo.util.RequestUtil;
 import com.stockinfo.util.StringUtil;
-import com.stockinfo.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * @Auther: Administrator
+ * @Auther: gaofan
  * @Date: 2020/4/13 0013 16 40
- * @Description:
+ * @Description:用户层
  */
 @RestController
 @RequestMapping("/user")

@@ -44,7 +44,7 @@ public class LoginAdapter implements   WebMvcConfigurer {
         System.out.println("进入拦截器");
         //addPathPatterns是表明拦截哪些请求
         //excludePathPatterns是对哪些请求不做拦截
-        registry.addInterceptor(loginInterceptor).addPathPatterns("/user/**").excludePathPatterns("/login/**");
+        registry.addInterceptor(loginInterceptor).addPathPatterns("/user/**","/stock/**").excludePathPatterns("/login/**");
     }
 
 }

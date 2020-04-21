@@ -1,6 +1,6 @@
 package com.stockinfo.util;
 
-import com.github.pagehelper.PageHelper;
+
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -23,8 +23,7 @@ public class PageUtil {
      * @param list  集合
      *</pre>
     */
-    public static PageInfo<Map<String,Object>> PageQuery(int pageIndex, int pageSize, List<Map<String,Object>> list){
-        PageHelper.startPage(pageIndex,pageSize);
+    public static PageInfo<Map<String,Object>> PageQuery(List<Map<String,Object>> list){
         PageInfo<Map<String,Object>> pageList=new  PageInfo<Map<String,Object>>(list);
         return pageList;
     }

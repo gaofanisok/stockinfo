@@ -6,11 +6,9 @@ import com.stockinfo.util.CommonUtil;
 import com.stockinfo.util.RequestUtil;
 import com.stockinfo.util.StringUtil;
 import com.stockinfo.util.Util;
-import com.sun.corba.se.spi.ior.ObjectKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -39,7 +37,7 @@ public class LoginController {
     */
     @RequestMapping(value = "/userLogin",method = RequestMethod.POST)
     public String login(HttpServletRequest request, HttpServletResponse response){
-        String username=RequestUtil.getString(request,"userName");
+        String username=RequestUtil.getString(request,"username");
         String password=RequestUtil.getString(request,"password");
 
         Map<String,Object> isSuccess=loginManager.UserIsExist(username,password);
@@ -55,17 +53,22 @@ public class LoginController {
         }
         return  CommonUtil.toReturnJsonMsg(1, "登陆失败");
     }
+    /**
+     *<pre>
+     * Description  : 注册  <br/>
+     * ChangeLog    : 1. 创建 (2020/4/15 0015 15:29 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/15 0015 15:29
+     *</pre>
+     */
     @RequestMapping(value = "/createUser",method = RequestMethod.POST)
     public String createUser(HttpServletRequest request, HttpServletResponse response){
         String datajson=RequestUtil.getString(request,"datajson");
 
         String id =loginManager.CreateUser(datajson);
         if (StringUtil.isNotEmpty(id)){
-
          return  CommonUtil.toReturnJsonMsg(0, "注册成功",id);
-
-
         }
-        return  CommonUtil.toReturnJsonMsg(1, "注册失败");
+        return  CommonUtil.toReturnJsonMsg(1, "注册失败:用户名已经存在");
     }
 }

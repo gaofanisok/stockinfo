@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +23,8 @@ import java.util.Map;
 public class UserManager {
     @Resource
     CommunalDao communalDao;
+
+    PageUtil PageUtil=new PageUtil();
     /**
      *<pre>
      * Description  : 查询  <br/>
@@ -39,7 +40,7 @@ public class UserManager {
         JSONObject js=new JSONObject();
         JSONArray ja=new JSONArray();
         String sql="Select * FROM stockinfo_userlog ";
-        PageInfo<Map<String,Object>> pageList=PageUtil.PageQuery(pageIndex,pageSize,communalDao.queryPage(sql));
+        PageInfo<Map<String,Object>> pageList=PageUtil.PageQuery(communalDao.queryPage(sql));
         if (pageList.getSize()>0){
             List<Map<String,Object>> list=pageList.getList();
             for (int i=0;i<list.size();i++){

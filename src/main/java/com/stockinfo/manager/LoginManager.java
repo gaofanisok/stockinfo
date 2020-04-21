@@ -28,7 +28,7 @@ public class LoginManager {
      * @param passWord  密码
      * @return java.lang.Boolean
      *</pre>
-    */
+     */
     public Map<String,Object>  UserIsExist(String userName,String passWord){
         String newPassWord=Util.getSHA256(passWord);
         String sql="select * from stockinfo_userlog where username='"+userName+"' and password='"+newPassWord+"'";
@@ -50,15 +50,18 @@ public class LoginManager {
      * @author gaofan
      * @date 2020/4/20 0020 15:03
      *</pre>
-    */
+     */
     public String CreateUser(String dataJson){
         if (StringUtil.isNotEmpty(dataJson)){
             String id=UUID.randomUUID().toString();
             Map<String,Object> datamap = JSONObject.parseObject(dataJson);
-            datamap.put("password",Util.getSHA256(datamap.get("password")+""));
-            String sql="insert into stockinfo_userlog value('"+id+"','"+datamap.getOrDefault("username","")+"','"+datamap.getOrDefault("password","")+"','"+datamap.getOrDefault("phone","")+"','0','"+Util.newdata() +"')";
-            communalDao.execute(sql);
-            return id;
+            String sql="select * from stockinfo_userlog where username='"+datamap.get("username")+"' ";
+            if (communalDao.query(sql).size()<=0) {
+                datamap.put("password", Util.getSHA256(datamap.get("password") + ""));
+                String sql2 = "insert into stockinfo_userlog value('" + id + "','" + datamap.getOrDefault("username", "") + "','" + datamap.getOrDefault("password", "") + "','" + datamap.getOrDefault("phone", "") + "','0','" + Util.newdata() + "')";
+                communalDao.execute(sql2);
+                return id;
+            }
         }
         return "";
     }

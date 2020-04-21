@@ -1,0 +1,1 @@
+INSERT INTO `stockinfo_userlog` (`ID_`, `username`, `password`, `phone`, `state`, `creationtime`) VALUES ('3c012fe8-131b-40df-ae6a-24eb155f4fd3', 'zhangsan', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '17608001447', '0', '2020-4-21 15:54:05');
