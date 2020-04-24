@@ -4,6 +4,7 @@ import com.stockinfo.manager.StockinfoManager;
 import com.stockinfo.util.CommonUtil;
 import com.stockinfo.util.RequestUtil;
 import com.stockinfo.util.StringUtil;
+import com.stockinfo.util.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Auther: gaofan
@@ -174,6 +176,26 @@ public class StockinfoController {
             e.printStackTrace();
         }
         return CommonUtil.toReturnJsonMsg(-1, "系统繁忙，请重试");
+    }
+
+    /**
+     *<pre>
+     * Description  : 收藏数据  <br/>
+     * ChangeLog    : 1. 创建 (2020/4/15 0015 15:29 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/15 0015 15:29
+     *</pre>
+     */
+    @RequestMapping(value = "/collect",method = RequestMethod.POST)
+    public String collect(HttpServletRequest request, HttpServletResponse response){
+        String datajson=RequestUtil.getString(request,"datajson");
+        String token=request.getHeader("accessToken");
+        String userid=Util.getUserId(token);
+        String id =stockinfoManager.collect(datajson,userid);
+        if (StringUtil.isNotEmpty(id)){
+            return  CommonUtil.toReturnJsonMsg(0, "收藏成功",id);
+        }
+        return  CommonUtil.toReturnJsonMsg(1, "收藏失败:已经收藏过了");
     }
 
 }
