@@ -24,7 +24,7 @@ public  class Util {
     /**
      *过期时间15分钟
      */
-    private static final long EXPIRE_TIME=15*60*1000;
+    private static final long EXPIRE_TIME=15*60*9999999;
 
     /**
      * token私密钥匙

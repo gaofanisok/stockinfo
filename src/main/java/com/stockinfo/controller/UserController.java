@@ -52,6 +52,14 @@ public class UserController {
         return CommonUtil.toReturnJsonMsg(-1, "系统繁忙，请重试");
 
     }
+    /**
+     *<pre>
+     * Description  : 查询用户详细  <br/>
+     * ChangeLog    : 1. 创建 (2020/4/20 0020 17:29 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/20 0020 17:29
+     *</pre>
+     */
     @RequestMapping(value = "getUserByid", method = RequestMethod.POST)
     public String getUserByid(HttpServletRequest request){
         try {
@@ -62,6 +70,32 @@ public class UserController {
               }else {
                   return CommonUtil.toReturnJsonMsg(1,"查询失败");
              }
+        } catch (Exception e) {
+            logger.error(e);
+            e.printStackTrace();
+        }
+        return CommonUtil.toReturnJsonMsg(-1,"系统繁忙，请重试");
+
+    }
+
+    /**
+     *<pre>
+     * Description  : 保存小程序用户  <br/>
+     * ChangeLog    : 1. 创建 (2020/4/20 0020 17:29 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/20 0020 17:29
+     *</pre>
+     */
+    @PostMapping(value = "saveUser")
+    public String saveUser(HttpServletRequest request){
+        try {
+            String datajson=RequestUtil.getString(request,"datajson");
+            String user=userManager.saveUser(datajson);
+            if (StringUtil.isNotEmpty(user)){
+                return CommonUtil.toReturnJsonMsg(0,"注册成功",user);
+            }else {
+                return CommonUtil.toReturnJsonMsg(1,"注册失败");
+            }
         } catch (Exception e) {
             logger.error(e);
             e.printStackTrace();

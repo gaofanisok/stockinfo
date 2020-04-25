@@ -24,218 +24,340 @@ import java.util.UUID;
 public class StockinfoManager {
     @Autowired
     CommunalDao communalDao;
+
     /**
-     *<pre>
+     * <pre>
      * Description  : 赢富资列表  <br/>
      * ChangeLog    : 1. 创建 (2020/4/21 0021 14:31 [gaofan]);
      * @author gaofan
      * @param mc 名称
      * @param lx 类型（0：全部，1：个人）
      * @return java.lang.String
-     *</pre>
+     * </pre>
      */
-    public String stockinfo(int pageIndex,int pageSize,String mc,String lx){
-        PageHelper.startPage(pageIndex,pageSize);
-        String sql="select * from stockinfo_table  where lx='"+lx+"'";
-        JSONObject jsRestu=new JSONObject();
-        JSONArray ja=new JSONArray();
-        if (StringUtil.isNotEmpty(mc)){
-            sql+=" and mc like '%"+mc+"%' ";
+    public String stockinfo(int pageIndex, int pageSize, String mc, String lx) {
+        PageHelper.startPage(pageIndex, pageSize);
+        String sql = "select * from stockinfo_table  where lx !='3' ";
+        JSONObject jsRestu = new JSONObject();
+        JSONArray ja = new JSONArray();
+        if (StringUtil.isNotEmpty(mc)) {
+            sql += " and mc like '%" + mc + "%' ";
         }
-        sql+=" order by creationtime desc";
-        PageInfo<Map<String,Object>> pageList=PageUtil.PageQuery(communalDao.queryPage(sql));
-        if (pageList.getSize()>0){
-            List<Map<String,Object>> list=pageList.getList();
-            for (Map map:list){
-                JSONObject jo=new JSONObject();
-                jo.put("id",map.getOrDefault("id_",""));
-                jo.put("mc",map.getOrDefault("mc",""));
-                jo.put("gdzjpj",map.getOrDefault("gdzjpj",""));
-                jo.put("drbh",map.getOrDefault("drbh",""));
-                jo.put("wrbh",map.getOrDefault("wrbh",""));
-                jo.put("esrbh",map.getOrDefault("esrbh",""));
-                jo.put("bzzf",map.getOrDefault("bzzf",""));
+        sql += " order by creationtime desc";
+        PageInfo<Map<String, Object>> pageList = PageUtil.PageQuery(communalDao.queryPage(sql));
+        if (pageList.getSize() > 0) {
+            List<Map<String, Object>> list = pageList.getList();
+            for (Map map : list) {
+                JSONObject jo = new JSONObject();
+                jo.put("id", map.getOrDefault("id_", ""));
+                jo.put("mc", map.getOrDefault("mc", ""));
+                jo.put("gdzjpj", map.getOrDefault("gdzjpj", ""));
+                jo.put("drbh", map.getOrDefault("drbh", ""));
+                jo.put("wrbh", map.getOrDefault("wrbh", ""));
+                jo.put("esrbh", map.getOrDefault("esrbh", ""));
+                jo.put("bzzf", map.getOrDefault("bzzf", ""));
                 ja.add(jo);
             }
-            jsRestu.put("data",ja);
+            jsRestu.put("data", ja);
         }
-        jsRestu.put("total",pageList.getTotal());
+        jsRestu.put("total", pageList.getTotal());
         return jsRestu.toString();
     }
+
     /**
-     *<pre>
+     * <pre>
      * Description  : 赢富资详细  <br/>
      * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
      * @author gaofan
      * @date 2020/4/21 0021 14:47
-     *</pre>
+     * </pre>
      */
-    public String getStockById(String id){
-        String sql="select * from stockinfo_table  where id_='"+id+"'";
-        JSONObject jsRestu=new JSONObject();
-        List<Map<String,Object>> stockList=communalDao.query(sql);
-        if (stockList.size()>0){
-            Map<String,Object> map=stockList.get(0);
-            jsRestu.put("id",map.getOrDefault("id_",""));
-            jsRestu.put("mc",map.getOrDefault("mc",""));
-            jsRestu.put("gdzjpj",map.getOrDefault("gdzjpj",""));
-            jsRestu.put("drbh",map.getOrDefault("drbh",""));
-            jsRestu.put("wrbh",map.getOrDefault("wrbh",""));
-            jsRestu.put("esrbh",map.getOrDefault("esrbh",""));
-            jsRestu.put("bzzf",map.getOrDefault("bzzf",""));
+    public String getStockById(String id) {
+        String sql = "select * from stockinfo_table  where id_='" + id + "'";
+        JSONObject jsRestu = new JSONObject();
+        List<Map<String, Object>> stockList = communalDao.query(sql);
+        if (stockList.size() > 0) {
+            Map<String, Object> map = stockList.get(0);
+            jsRestu.put("id", map.getOrDefault("id_", ""));
+            jsRestu.put("mc", map.getOrDefault("mc", ""));
+            jsRestu.put("gdzjpj", map.getOrDefault("gdzjpj", ""));
+            jsRestu.put("drbh", map.getOrDefault("drbh", ""));
+            jsRestu.put("wrbh", map.getOrDefault("wrbh", ""));
+            jsRestu.put("esrbh", map.getOrDefault("esrbh", ""));
+            jsRestu.put("bzzf", map.getOrDefault("bzzf", ""));
         }
         return jsRestu.toString();
 
     }
 
     /**
-     *<pre>
+     * <pre>
      * Description  : 机构评级列表  <br/>
      * ChangeLog    : 1. 创建 (2020/4/21 0021 14:31 [gaofan]);
      * @author gaofan
      * @param mc 名称
      * @param lx 类型（0：全部，1：个人）
      * @return java.lang.String
-     *</pre>
+     * </pre>
      */
-    public String institutionsInfo(int pageIndex,int pageSize,String mc,String lx){
-        PageHelper.startPage(pageIndex,pageSize);
-        String sql="select * from stockinfo_institutionstable  where lx='"+lx+"'";
-        JSONObject jsRestu=new JSONObject();
-        JSONArray ja=new JSONArray();
-        if (StringUtil.isNotEmpty(mc)){
-            sql+=" and mc like '%"+mc+"%' ";
+    public String institutionsInfo(int pageIndex, int pageSize, String mc, String lx) {
+        PageHelper.startPage(pageIndex, pageSize);
+        String sql = "select * from stockinfo_institutionstable  where lx !='3'";
+        JSONObject jsRestu = new JSONObject();
+        JSONArray ja = new JSONArray();
+        if (StringUtil.isNotEmpty(mc)) {
+            sql += " and mc like '%" + mc + "%' ";
         }
-        sql+=" order by creationtime desc";
-        PageInfo<Map<String,Object>> pageList=PageUtil.PageQuery(communalDao.queryPage(sql));
-        if (pageList.getSize()>0){
-            List<Map<String,Object>> list=pageList.getList();
-            for (Map map:list){
-                JSONObject jo=new JSONObject();
-                jo.put("id",map.getOrDefault("id_",""));
-                jo.put("mc",map.getOrDefault("mc",""));
-                jo.put("ltpj",map.getOrDefault("ltpj",""));
-                jo.put("bsz",map.getOrDefault("bsz",""));
-                jo.put("qqjgcgsl",map.getOrDefault("qqjgcgsl",""));
-                jo.put("bsqbh",map.getOrDefault("bsqbh",""));
-                jo.put("zzjds",map.getOrDefault("zzjds",""));
+        sql += " order by creationtime desc";
+        PageInfo<Map<String, Object>> pageList = PageUtil.PageQuery(communalDao.queryPage(sql));
+        if (pageList.getSize() > 0) {
+            List<Map<String, Object>> list = pageList.getList();
+            for (Map map : list) {
+                JSONObject jo = new JSONObject();
+                jo.put("id", map.getOrDefault("id_", ""));
+                jo.put("mc", map.getOrDefault("mc", ""));
+                jo.put("ltpj", map.getOrDefault("ltpj", ""));
+                jo.put("bsz", map.getOrDefault("bsz", ""));
+                jo.put("qqjgcgsl", map.getOrDefault("qqjgcgsl", ""));
+                jo.put("bsqbh", map.getOrDefault("bsqbh", ""));
+                jo.put("zzjds", map.getOrDefault("zzjds", ""));
                 ja.add(jo);
             }
-            jsRestu.put("data",ja);
+            jsRestu.put("data", ja);
         }
-        jsRestu.put("total",pageList.getTotal());
+        jsRestu.put("total", pageList.getTotal());
         return jsRestu.toString();
     }
+
     /**
-     *<pre>
+     * <pre>
      * Description  : 机构评级详细  <br/>
      * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
      * @author gaofan
      * @date 2020/4/21 0021 14:47
-     *</pre>
+     * </pre>
      */
-    public String getInstitutionById(String id){
-        String sql="select * from stockinfo_institutionstable  where id_='"+id+"'";
-        JSONObject jsRestu=new JSONObject();
-        List<Map<String,Object>> stockList=communalDao.query(sql);
-        if (stockList.size()>0){
-            Map<String,Object> map=stockList.get(0);
-            jsRestu.put("id",map.getOrDefault("id_",""));
-            jsRestu.put("mc",map.getOrDefault("mc",""));
-            jsRestu.put("ltpj",map.getOrDefault("ltpj",""));
-            jsRestu.put("bsz",map.getOrDefault("bsz",""));
-            jsRestu.put("qqjgcgsl",map.getOrDefault("qqjgcgsl",""));
-            jsRestu.put("bsqbh",map.getOrDefault("bsqbh",""));
-            jsRestu.put("zzjds",map.getOrDefault("zzjds",""));
+    public String getInstitutionById(String id) {
+        String sql = "select * from stockinfo_institutionstable  where id_='" + id + "'";
+        JSONObject jsRestu = new JSONObject();
+        List<Map<String, Object>> stockList = communalDao.query(sql);
+        if (stockList.size() > 0) {
+            Map<String, Object> map = stockList.get(0);
+            jsRestu.put("id", map.getOrDefault("id_", ""));
+            jsRestu.put("mc", map.getOrDefault("mc", ""));
+            jsRestu.put("ltpj", map.getOrDefault("ltpj", ""));
+            jsRestu.put("bsz", map.getOrDefault("bsz", ""));
+            jsRestu.put("qqjgcgsl", map.getOrDefault("qqjgcgsl", ""));
+            jsRestu.put("bsqbh", map.getOrDefault("bsqbh", ""));
+            jsRestu.put("zzjds", map.getOrDefault("zzjds", ""));
         }
         return jsRestu.toString();
     }
 
     /**
-     *<pre>
+     * <pre>
      * Description  : 行业top列表  <br/>
      * ChangeLog    : 1. 创建 (2020/4/21 0021 14:31 [gaofan]);
      * @author gaofan
      * @param mc 名称
      * @param lx 类型（0：全部，1：个人）
      * @return java.lang.String
-     *</pre>
+     * </pre>
      */
-    public String industryinfo(int pageIndex,int pageSize,String mc,String gn){
-        PageHelper.startPage(pageIndex,pageSize);
-        String sql="select * from stockinfo_industrytable where lx='0'";
-        JSONObject jsRestu=new JSONObject();
-        JSONArray ja=new JSONArray();
-        if (StringUtil.isNotEmpty(mc)){
-            sql+=" and mc like '%"+mc+"%' ";
+    public String industryinfo(int pageIndex, int pageSize, String mc, String gn) {
+        PageHelper.startPage(pageIndex, pageSize);
+        String sql = "select * from stockinfo_industrytable where lx !='3' ";
+        JSONObject jsRestu = new JSONObject();
+        JSONArray ja = new JSONArray();
+        if (StringUtil.isNotEmpty(mc)) {
+            sql += " and mc like '%" + mc + "%' ";
         }
-        if (StringUtil.isNotEmpty(gn)){
-            sql+=" and gn like '%"+gn+"%' ";
+        if (StringUtil.isNotEmpty(gn)) {
+            sql += " and gn like '%" + gn + "%' ";
         }
-        sql+=" order by ph ";
-        PageInfo<Map<String,Object>> pageList=PageUtil.PageQuery(communalDao.queryPage(sql));
-        if (pageList.getSize()>0){
-            List<Map<String,Object>> list=pageList.getList();
-            for (Map map:list){
-                JSONObject jo=new JSONObject();
-                jo.put("id",map.getOrDefault("id_",""));
-                jo.put("mc",map.getOrDefault("mc",""));
-                jo.put("gn",map.getOrDefault("gn",""));
-                jo.put("ph",map.getOrDefault("ph",""));
-                jo.put("ltpj",map.getOrDefault("ltpj",""));
-                jo.put("ltsz",map.getOrDefault("ltsz",""));
-                jo.put("ccjgsl",map.getOrDefault("ccjgsl",""));
+        sql += " order by ph ";
+        PageInfo<Map<String, Object>> pageList = PageUtil.PageQuery(communalDao.queryPage(sql));
+        if (pageList.getSize() > 0) {
+            List<Map<String, Object>> list = pageList.getList();
+            for (Map map : list) {
+                JSONObject jo = new JSONObject();
+                jo.put("id", map.getOrDefault("id_", ""));
+                jo.put("mc", map.getOrDefault("mc", ""));
+                jo.put("gn", map.getOrDefault("gn", ""));
+                jo.put("ph", map.getOrDefault("ph", ""));
+                jo.put("ltpj", map.getOrDefault("ltpj", ""));
+                jo.put("ltsz", map.getOrDefault("ltsz", ""));
+                jo.put("ccjgsl", map.getOrDefault("ccjgsl", ""));
                 ja.add(jo);
             }
-            jsRestu.put("data",ja);
+            jsRestu.put("data", ja);
         }
-        jsRestu.put("total",pageList.getTotal());
+        jsRestu.put("total", pageList.getTotal());
         return jsRestu.toString();
     }
+
     /**
-     *<pre>
+     * <pre>
      * Description  : 行业top详细  <br/>
      * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
      * @author gaofan
      * @date 2020/4/21 0021 14:47
-     *</pre>
+     * </pre>
      */
-    public String getIndustrytaById(String id){
-        String sql="select * from stockinfo_industrytable  where id_='"+id+"'";
-        JSONObject jsRestu=new JSONObject();
-        List<Map<String,Object>> stockList=communalDao.query(sql);
-        if (stockList.size()>0){
-            Map<String,Object> map=stockList.get(0);
-            jsRestu.put("id",map.getOrDefault("id_",""));
-            jsRestu.put("mc",map.getOrDefault("mc",""));
-            jsRestu.put("gn",map.getOrDefault("gn",""));
-            jsRestu.put("ph",map.getOrDefault("ph",""));
-            jsRestu.put("ltpj",map.getOrDefault("ltpj",""));
-            jsRestu.put("ltsz",map.getOrDefault("ltsz",""));
-            jsRestu.put("ccjgsl",map.getOrDefault("ccjgsl",""));
+    public String getIndustrytaById(String id) {
+        String sql = "select * from stockinfo_industrytable  where id_='" + id + "'";
+        JSONObject jsRestu = new JSONObject();
+        List<Map<String, Object>> stockList = communalDao.query(sql);
+        if (stockList.size() > 0) {
+            Map<String, Object> map = stockList.get(0);
+            jsRestu.put("id", map.getOrDefault("id_", ""));
+            jsRestu.put("mc", map.getOrDefault("mc", ""));
+            jsRestu.put("gn", map.getOrDefault("gn", ""));
+            jsRestu.put("ph", map.getOrDefault("ph", ""));
+            jsRestu.put("ltpj", map.getOrDefault("ltpj", ""));
+            jsRestu.put("ltsz", map.getOrDefault("ltsz", ""));
+            jsRestu.put("ccjgsl", map.getOrDefault("ccjgsl", ""));
         }
         return jsRestu.toString();
     }
 
     /**
-     *<pre>
+     * <pre>
      * Description  :收藏数据 <br/>
      * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
      * @author gaofan
      * @date 2020/4/21 0021 14:47
-     *</pre>
+     * </pre>
      */
-    public String collect(String datajson,String userid){
-        if (StringUtil.isNotEmpty(datajson)){
-            String id= UUID.randomUUID().toString();
-            Map<String,Object> datamap = com.alibaba.fastjson.JSONObject.parseObject(datajson);
-            String sql="select * from stockinfo_collect where lx='"+datamap.get("lx")+"' and scid='"+datamap.get("scid")+"' and userid='"+userid+"' ";
-            if (communalDao.query(sql).size()<=0) {
-                String sql2 = "insert into stockinfo_collect value('" + id + "','" + datamap.getOrDefault("lx", "") + "','" + datamap.getOrDefault("scid", "") + "','" +userid+ "','" + Util.newdata() + "')";
+    public String collect(String datajson, String userid) {
+        if (StringUtil.isNotEmpty(datajson)) {
+            String id = UUID.randomUUID().toString();
+            Map<String, Object> datamap = com.alibaba.fastjson.JSONObject.parseObject(datajson);
+            String sql = "select * from stockinfo_collect where lx='" + datamap.get("lx") + "' and scid='" + datamap.get("scid") + "' and userid='" + userid + "' ";
+            if (communalDao.query(sql).size() <= 0) {
+                String sql2 = "insert into stockinfo_collect value('" + id + "','" + datamap.getOrDefault("lx", "") + "','" + datamap.getOrDefault("scid", "") + "','" + userid + "','" + Util.newdata() + "')";
                 communalDao.execute(sql2);
                 return id;
             }
         }
         return "";
+    }
+
+    /**
+     * <pre>
+     * Description  :我的收藏列表 <br/>
+     * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/21 0021 14:47
+     * </pre>
+     */
+    public String myCollectList(String userId, String type, String mc, int pageIndex, int pageSize) {
+        if (StringUtil.isNotEmpty(userId) && StringUtil.isNotEmpty(type)) {
+            PageHelper.startPage(pageIndex, pageSize);
+            JSONObject jo = new JSONObject();
+            String sql = "";
+            //type:0:stockinfo_table,1:stockinfo_institutionstable
+            if ("0".equals(type)) {
+                sql = "select b.* from stockinfo_collect as a left join stockinfo_table as b on a.scid=b.id_ where a.userid='" + userId + "' and a.lx='" + type + "'";
+            }
+            if ("1".equals(type)) {
+                sql = "select b.* from stockinfo_collect as a left join stockinfo_institutionstable as b on a.scid=b.id_ where a.userid='" + userId + "' and a.lx='" + type + "'";
+            }
+            if (StringUtil.isNotEmpty(mc)) {
+                sql += " and b.mc like '%" + mc + "%'";
+            }
+            PageInfo<Map<String, Object>> pageList = PageUtil.PageQuery(communalDao.queryPage(sql));
+//            if (pageList.getSize()>0){
+//                List<Map<String,Object>> list=pageList.getList();
+//            }
+            pageList.getList().remove("creationtime");
+            pageList.getList().remove("userid");
+
+            jo.put("data", pageList.getList());
+            jo.put("total", pageList.getTotal());
+            return jo.toString();
+        }
+        return "";
+    }
+
+    /**
+     * <pre>
+     * Description  :删除所有表 <br/>
+     * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
+     * @author gaofan
+     * @param type 表类型 1：富赢资金，2：行业top,3:机构评级
+     * @param state 删除类型 0：根据ID删除，1：删除当天导入
+     * @date 2020/4/21 0021 14:47
+     * </pre>
+     */
+    public String delAll(String type, String id, String state) {
+        if (StringUtil.isNotEmpty(type) && StringUtil.isNotEmpty(state)) {
+            String sql = "";
+            switch (type) {
+                case "1":
+                    switch (state) {
+                        case "0":
+                            if (StringUtil.isNotEmpty(id)) {
+                                sql = delsql("stockinfo_table", "0", id);
+                            }
+                            break;
+                        case "1":
+                            sql = delsql("stockinfo_table", "1", "");
+                            break;
+                    }
+                    break;
+                case "2":
+                    switch (state) {
+                        case "0":
+                            if (StringUtil.isNotEmpty(id)) {
+                                sql = delsql("stockinfo_industrytable", "0", id);
+                            }
+                            break;
+                        case "1":
+                            sql = delsql("stockinfo_industrytable", "1", "");
+                            break;
+                    }
+                    break;
+                case "3":
+                    switch (state) {
+                        case "0":
+                            if (StringUtil.isNotEmpty(id)) {
+                                sql = delsql("stockinfo_institutionstable", "0", id);
+                            }
+                            break;
+                        case "1":
+                            sql = delsql("stockinfo_institutionstable", "1", "");
+                            break;
+                    }
+                    break;
+
+            }
+            communalDao.execute(sql);
+            return "1";
+        }
+        return "";
+    }
+
+    /**
+     * <pre>
+     * Description  :删除sql <br/>
+     * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/21 0021 14:47
+     * </pre>
+     */
+    public String delsql(String form, String type, String id) {
+        String sql = "";
+        switch (type) {
+            case "0":
+                sql = "delete from " + form + " where id_='" + id + "'";
+                break;
+            case "1":
+                sql = "delete from " + form + " where DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')";
+                break;
+            default:
+                break;
+        }
+        return sql;
     }
 }

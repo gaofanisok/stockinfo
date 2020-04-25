@@ -1,7 +1,9 @@
 package com.stockinfo.controller;
 
 import com.stockinfo.manager.ExcelManager;
+import com.stockinfo.util.CommonUtil;
 import com.stockinfo.util.RequestUtil;
+import com.stockinfo.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,11 @@ public class ExcelController {
     @PostMapping("/single")
     public String importExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         String type=RequestUtil.getString(request,"type");
-
-        return excelManager.importExcel(file,type);
+        String res=excelManager.importExcel(file,type);
+        if (StringUtil.isNotEmpty(res)){
+            return  CommonUtil.toReturnJsonMsg(0, "成功",res);
+        }
+        return  CommonUtil.toReturnJsonMsg(1, "失败",res);
     }
     @GetMapping("/singles")
     public void export(HttpServletResponse response,HttpServletRequest request) {

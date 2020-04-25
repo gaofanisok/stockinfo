@@ -197,5 +197,57 @@ public class StockinfoController {
         }
         return  CommonUtil.toReturnJsonMsg(1, "收藏失败:已经收藏过了");
     }
+    /**
+     *<pre>
+     * Description  :我的收藏列表 <br/>
+     * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
+     *</pre>
+     */
+    @RequestMapping(value = "myCollectList", method = RequestMethod.POST)
+    public String myCollectList(HttpServletRequest request){
+        try {
+            int pageIndex=RequestUtil.getInt(request,"pageIndex",1);
+            int pageSize=RequestUtil.getInt(request,"pageSize",5);
+            String mc=RequestUtil.getString(request,"mc");
+            String type=RequestUtil.getString(request,"type");
+            String token=request.getHeader("accessToken");
+            String userid=Util.getUserId(token);
+            String stockinfo=stockinfoManager.myCollectList(userid,type,mc,pageIndex,pageSize);
+            if (StringUtil.isNotEmpty(stockinfo)) {
+                return  CommonUtil.toReturnJsonMsg(0, "成功",stockinfo);
+            } else {
+                return CommonUtil.toReturnJsonMsg(1, "数据错误：获取数据失败！");
+            }
+        } catch (Exception e) {
+            logger.error(e);
+            e.printStackTrace();
+        }
+        return CommonUtil.toReturnJsonMsg(-1, "系统繁忙，请重试");
+    }
+
+    /**
+     *<pre>
+     * Description  :删除所有 <br/>
+     * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
+     *</pre>
+     */
+    @RequestMapping(value = "delAll", method = RequestMethod.POST)
+    public String delAll(HttpServletRequest request){
+        try {
+            String type=RequestUtil.getString(request,"type");
+            String id=RequestUtil.getString(request,"id");
+            String state=RequestUtil.getString(request,"state");
+            String stockinfo=stockinfoManager.delAll(type,id,state);
+            if (StringUtil.isNotEmpty(stockinfo)) {
+                return  CommonUtil.toReturnJsonMsg(0, "删除成功");
+            } else {
+                return CommonUtil.toReturnJsonMsg(1, "数据错误：删除失败！");
+            }
+        } catch (Exception e) {
+            logger.error(e);
+            e.printStackTrace();
+        }
+        return CommonUtil.toReturnJsonMsg(-1, "系统繁忙，请重试");
+    }
 
 }

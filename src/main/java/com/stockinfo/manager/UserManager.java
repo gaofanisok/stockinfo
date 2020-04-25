@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.stockinfo.dao.CommunalDao;
 import com.stockinfo.util.PageUtil;
+import com.stockinfo.util.StringUtil;
 import com.stockinfo.util.Util;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @Auther: gaofan
@@ -66,8 +68,8 @@ public class UserManager {
      * ChangeLog    : 1. 创建 (2020/4/20 0020 17:18 [gaofan]);
      * @author gaofan
      * @date 2020/4/20 0020 17:18
-     *</pre>          
-    */
+     *</pre>
+     */
     public String  getUserByid(String id){
         String sql="select * from stockinfo_userlog where ID_='"+id+"'";
         List<Map<String,Object>> userList=communalDao.query(sql);
@@ -78,6 +80,28 @@ public class UserManager {
             jo.put("username",map.getOrDefault("username",""));
             jo.put("phone",map.getOrDefault("phone",""));
             return jo.toString();
+        }
+        return "";
+    }
+    /**
+     *<pre>
+     * Description  : 小程序用户添加  <br/>
+     * ChangeLog    : 1. 创建 (2020/4/20 0020 17:18 [gaofan]);
+     * @author gaofan
+     * @date 2020/4/20 0020 17:18
+     *</pre>
+     */
+    public String saveUser(String datajson){
+        if (StringUtil.isNotEmpty(datajson)){
+            String id= UUID.randomUUID().toString();
+            Map<String,Object> datamap = com.alibaba.fastjson.JSONObject.parseObject(datajson);
+            String sql="select * from stockinfo_userprogram where user_wxid='"+datamap.get("user_wxid")+"'";
+            if (communalDao.query(sql).size()<=0){
+                String sql2 = "insert into stockinfo_userprogram(user_id,user_name,user_phone,user_wxid,user_tx,user_sex,creationtime,user_type) value('" + id + "','" + datamap.getOrDefault("user_name", "") + "','" + datamap.getOrDefault("user_phone", "") + "','" + datamap.getOrDefault("user_wxid", "") + "','"+datamap.getOrDefault("user_tx","")+"','"+datamap.getOrDefault("user_sex","")+"','" + Util.newdata() + "','0')";
+                communalDao.execute(sql2);
+                return id;
+            }
+
         }
         return "";
     }

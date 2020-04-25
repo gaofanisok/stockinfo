@@ -27,4 +27,63 @@ public class StockinfoInstitutionsExport {
 
     @Excel(name = "增长季度数",orderNum="6")
     private String zzjds;
+
+    @Excel(name = "类型{非会员填写 0\", \"会员填写1}",orderNum = "7",width = 30)
+    private String lx;
+
+    public String getLx() {
+        return lx;
+    }
+
+    public void setLx(String lx) {
+        this.lx = lx;
+    }
+
+    public String getMc() {
+        return mc;
+    }
+
+    public void setMc(String mc) {
+        this.mc = mc;
+    }
+
+    public String getLtpj() {
+        return ltpj;
+    }
+
+    public void setLtpj(String ltpj) {
+        this.ltpj = ltpj;
+    }
+
+    public String getBsz() {
+        return bsz;
+    }
+
+    public void setBsz(String bsz) {
+        this.bsz = bsz;
+    }
+
+    public String getQqjgcgsl() {
+        return qqjgcgsl;
+    }
+
+    public void setQqjgcgsl(String qqjgcgsl) {
+        this.qqjgcgsl = qqjgcgsl;
+    }
+
+    public String getBsqbh() {
+        return bsqbh;
+    }
+
+    public void setBsqbh(String bsqbh) {
+        this.bsqbh = bsqbh;
+    }
+
+    public String getZzjds() {
+        return zzjds;
+    }
+
+    public void setZzjds(String zzjds) {
+        this.zzjds = zzjds;
+    }
 }
