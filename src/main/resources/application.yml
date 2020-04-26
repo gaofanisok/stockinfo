@@ -1,5 +1,9 @@
 server:
-  port: 9090
+  port: 443
+  ssl:
+    key-store: classpath:3831019_31094ld435.wicp.vip.pfx
+    key-store-password: yr4vt6eJ
+    key-store-type: PKCS12
 #jdbc
 spring:
   datasource:

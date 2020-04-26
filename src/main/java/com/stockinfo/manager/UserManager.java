@@ -37,20 +37,29 @@ public class UserManager {
      * @return java.lang.String
      *</pre>
      */
-    public String seleuser(int pageIndex,int pageSize) throws ParseException {
+    public String seleuser(int pageIndex,int pageSize,String phone) throws ParseException {
         PageHelper.startPage(pageIndex,pageSize);
         JSONObject js=new JSONObject();
         JSONArray ja=new JSONArray();
-        String sql="Select * FROM stockinfo_userlog ";
+        String sql="Select * FROM stockinfo_userprogram  ";
+        if (StringUtil.isNotEmpty(phone)){
+            sql+=" where user_phone='"+phone+"'";
+        }
+        sql+=" order by creationtime desc";
         PageInfo<Map<String,Object>> pageList=PageUtil.PageQuery(communalDao.queryPage(sql));
         if (pageList.getSize()>0){
             List<Map<String,Object>> list=pageList.getList();
             for (int i=0;i<list.size();i++){
                 JSONObject js2=new JSONObject();
                 Map<String,Object> maps=list.get(i);
-                js2.put("id",maps.getOrDefault("ID_",""));
-                js2.put("username",maps.getOrDefault("username",""));
-                js2.put("phone",maps.getOrDefault("phone","")+"");
+                js2.put("user_id",maps.getOrDefault("user_id",""));
+                js2.put("user_name",maps.getOrDefault("user_name",""));
+                js2.put("user_phone",maps.getOrDefault("user_phone","")+"");
+                js2.put("user_wxid",maps.getOrDefault("user_phone","")+"");
+                js2.put("user_sex",maps.getOrDefault("user_sex","")+"");
+                js2.put("starttime",Util.dateToString(maps.getOrDefault("starttime","")+"","yyyy-MM-dd"));
+                js2.put("endtime",Util.dateToString(maps.getOrDefault("endtime","")+"","yyyy-MM-dd"));
+                js2.put("user_type",maps.getOrDefault("user_type","")+"");
                 js2.put("creationtime",Util.dateToString(maps.getOrDefault("creationtime","")+"","yyyy-MM-dd HH:mm:ss"));
                 ja.add(js2);
             }

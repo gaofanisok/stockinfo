@@ -39,7 +39,8 @@ public class UserController {
         try {
             int pageIndex=RequestUtil.getInt(request,"pageIndex",1);
             int pageSize=RequestUtil.getInt(request,"pageSize",5);
-            String user=userManager.seleuser(pageIndex,pageSize);
+            String phone=RequestUtil.getString(request,"phone");
+            String user=userManager.seleuser(pageIndex,pageSize,phone);
             if (StringUtil.isNotEmpty(user)) {
                 return  CommonUtil.toReturnJsonMsg(0, "成功",user);
             } else {
