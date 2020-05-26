@@ -11,6 +11,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Map;
 
 /**
  * @Auther: gaofan
@@ -39,8 +41,8 @@ public class UserController {
         try {
             int pageIndex=RequestUtil.getInt(request,"pageIndex",1);
             int pageSize=RequestUtil.getInt(request,"pageSize",5);
-            String phone=RequestUtil.getString(request,"phone");
-            String user=userManager.seleuser(pageIndex,pageSize,phone);
+            String name=RequestUtil.getString(request,"name");
+            String user=userManager.seleuser(pageIndex,pageSize,name);
             if (StringUtil.isNotEmpty(user)) {
                 return  CommonUtil.toReturnJsonMsg(0, "成功",user);
             } else {
@@ -79,31 +81,66 @@ public class UserController {
 
     }
 
+//    /**
+//     *<pre>
+//     * Description  : 保存小程序用户  <br/>
+//     * ChangeLog    : 1. 创建 (2020/4/20 0020 17:29 [gaofan]);
+//     * @author gaofan
+//     * @date 2020/4/20 0020 17:29
+//     *</pre>
+//     */
+//    @PostMapping(value = "saveUser")
+//    public String saveUser(HttpServletRequest request){
+//        try {
+//            String datajson=RequestUtil.getString(request,"datajson");
+//            String user=userManager.saveUser(datajson);
+//            if (StringUtil.isNotEmpty(user)){
+//                return CommonUtil.toReturnJsonMsg(0,"注册成功",user);
+//            }else {
+//                return CommonUtil.toReturnJsonMsg(1,"注册失败");
+//            }
+//        } catch (Exception e) {
+//            logger.error(e);
+//            e.printStackTrace();
+//        }
+//        return CommonUtil.toReturnJsonMsg(-1,"系统繁忙，请重试");
+//
+//    }
+    @PostMapping(value = "getUnionId")
+    public Map getUnionId(HttpServletRequest request) {
+        String encryptedData=RequestUtil.getString(request,"encryptedData");
+        String iv=RequestUtil.getString(request,"iv");
+        String code=RequestUtil.getString(request,"code");
+        return userManager.getSessionKeyOrOpenId(code, encryptedData, iv);
+    }
+
     /**
-     *<pre>
-     * Description  : 保存小程序用户  <br/>
-     * ChangeLog    : 1. 创建 (2020/4/20 0020 17:29 [gaofan]);
-     * @author gaofan
-     * @date 2020/4/20 0020 17:29
-     *</pre>
+     * 更新权限
+     * @param request
+     * @return
+     * @throws ParseException
      */
-    @PostMapping(value = "saveUser")
-    public String saveUser(HttpServletRequest request){
+    @PostMapping(value = "updateUser")
+    public String updateUser(HttpServletRequest request) throws ParseException {
+        String id=RequestUtil.getString(request,"id");
+        String endTime=RequestUtil.getString(request,"endtime");
+        String type=RequestUtil.getString(request,"type");
+        String user=userManager.updateUser(endTime,id,type);
         try {
-            String datajson=RequestUtil.getString(request,"datajson");
-            String user=userManager.saveUser(datajson);
-            if (StringUtil.isNotEmpty(user)){
-                return CommonUtil.toReturnJsonMsg(0,"注册成功",user);
-            }else {
-                return CommonUtil.toReturnJsonMsg(1,"注册失败");
+            if (StringUtil.isNotEmpty(user)) {
+                return CommonUtil.toReturnJsonMsg(0, "更新成功");
+            } else {
+                return CommonUtil.toReturnJsonMsg(1, "更新失败");
             }
         } catch (Exception e) {
             logger.error(e);
             e.printStackTrace();
         }
-        return CommonUtil.toReturnJsonMsg(-1,"系统繁忙，请重试");
 
+        return CommonUtil.toReturnJsonMsg(-1,"系统繁忙，请重试");
     }
+
+
 
 
 

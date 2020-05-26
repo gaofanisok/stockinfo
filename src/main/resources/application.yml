@@ -1,9 +1,10 @@
 server:
   port: 443
   ssl:
-    key-store: classpath:3831019_31094ld435.wicp.vip.pfx
-    key-store-password: yr4vt6eJ
+    key-store: 3958466_haodu123.cn.pfx
+    key-store-password: l4AmSKMq
     key-store-type: PKCS12
+    enabled: true
 #jdbc
 spring:
   datasource:
@@ -16,6 +17,10 @@ spring:
       initial-size: 5
       max-total: 5
       max-wait-millis: 60000
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
 mybatis:
   typeAliasesPackage: com.stockinfo.entity
   mapperLocations: classpath:mapper/*.xml
@@ -26,6 +31,10 @@ pagehelper:
     reasonable: false
     supportMethodsArguments: true
     params: count=countSql
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
 

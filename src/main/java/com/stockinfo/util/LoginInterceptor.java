@@ -22,7 +22,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         httpServletResponse.setCharacterEncoding("UTF-8");
-        String token=httpServletRequest.getHeader("accessToken");
+        String token=httpServletRequest.getHeader("token");
         if (token!=null){
             boolean result=Util.verify(token);
             if (result){

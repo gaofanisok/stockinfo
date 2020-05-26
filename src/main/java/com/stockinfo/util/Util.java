@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -20,51 +22,52 @@ import java.util.Map;
  * @Date: 2020/4/15 0015 15 11
  * @Description: 工具类
  */
-public  class Util {
+public class Util {
     /**
-     *过期时间15分钟
+     * 过期时间15分钟
      */
-    private static final long EXPIRE_TIME=15*60*9999999;
+    private static final long EXPIRE_TIME = 15 * 60 * 9999999;
 
     /**
      * token私密钥匙
      */
-    private static  final String TOKEN="0cf92441214a4d9c811580b2b457018c";
+    private static final String TOKEN = "0cf92441214a4d9c811580b2b457018c";
 
     /**
-     *<pre>
+     * <pre>
      * Description  : 产生token  <br/>
      * ChangeLog    : 1. 创建 (2020/4/15 0015 15:37 [gaofan]);
      * @author gaofan
      * @date 2020/4/15 0015 15:37
-     *</pre>          
-    */
-    public static String sign(String userName,String userId) throws UnsupportedEncodingException {
+     * </pre>
+     */
+    public static String sign(String userName, String userId) throws UnsupportedEncodingException {
         //过期时间
-        Date date=new Date(System.currentTimeMillis()+EXPIRE_TIME);
+        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
         //私密钥匙算法
-        Algorithm algorithm= Algorithm.HMAC256(TOKEN);
+        Algorithm algorithm = Algorithm.HMAC256(TOKEN);
         //设置头部信息
-        Map<String,Object> header=new HashMap<>(2);
-        header.put("typ","JWT");
-        header.put("alg","HS256");
+        Map<String, Object> header = new HashMap<>(2);
+        header.put("typ", "JWT");
+        header.put("alg", "HS256");
         //附带username,userID信息，生成签名
-        return JWT.create().withHeader(header).withClaim("loginName",userName).withClaim("userId",userId).withExpiresAt(date).sign(algorithm);
+        return JWT.create().withHeader(header).withClaim("loginName", userName).withClaim("userId", userId).withExpiresAt(date).sign(algorithm);
     }
+
     /**
-     *<pre>
+     * <pre>
      * Description  : 验证token是否正确  <br/>
      * ChangeLog    : 1. 创建 (2020/4/15 0015 15:37 [Administrator]);
      * @author Administrator
      * @date 2020/4/15 0015 15:37
-     *</pre>
-    */
-    public static boolean verify(String token){
-        if (!"".equals(token)){
+     * </pre>
+     */
+    public static boolean verify(String token) {
+        if (!"".equals(token)) {
             try {
-                Algorithm algorithm=Algorithm.HMAC256(TOKEN);
-                JWTVerifier jwtVerifier=JWT.require(algorithm).build();
-                DecodedJWT decodedJWT=jwtVerifier.verify(token);
+                Algorithm algorithm = Algorithm.HMAC256(TOKEN);
+                JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = jwtVerifier.verify(token);
                 return true;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -72,13 +75,14 @@ public  class Util {
         }
         return false;
     }
+
     /**
-     *<pre>
+     * <pre>
      * Description  : token获取用户id<br/>
      * ChangeLog    : 1. 创建 (2020/4/15 0015 15:37 [gaofan]);
      * @author gaofan
      * @date 2020/4/15 0015 15:37
-     *</pre>
+     * </pre>
      */
     public static String getUserId(String token) {
         try {
@@ -89,13 +93,14 @@ public  class Util {
         }
         return null;
     }
+
     /**
-     *<pre>
+     * <pre>
      * Description  : token获取用户name<br/>
      * ChangeLog    : 1. 创建 (2020/4/15 0015 15:37 [gaofan]);
      * @author gaofan
      * @date 2020/4/15 0015 15:37
-     *</pre>
+     * </pre>
      */
     public static String getUserName(String token) {
         try {
@@ -106,32 +111,74 @@ public  class Util {
         }
         return null;
     }
+
     /**
-     *<pre>
+     * <pre>
      * Description  : 日期转换字符串  <br/>
      * ChangeLog    : 1. 创建 (2020/4/16 0016 14:52 [gaofan]);
      * @author Administrator
      * @date 2020/4/16 0016 14:52
-     *</pre>
-    */
-    public static  String dateToString(String date,String rlqx) throws ParseException {
-        if (date!=null){
-            SimpleDateFormat sdf =new SimpleDateFormat(rlqx);
+     * </pre>
+     */
+    public static String dateToString(String date, String rlqx) throws ParseException {
+        if (date != null && StringUtil.isNotEmpty(date)) {
+            SimpleDateFormat sdf = new SimpleDateFormat(rlqx);
             return sdf.format(sdf.parse(date));
         }
         return "";
     }
 
+    /**
+     * 将日期型字符串Tue Oct 01 00:00:00 CST 2019转换为字符串
+     * @param rq
+     * @return
+     * @throws ParseException
+     */
+    public static String dateToStrings(String rq) throws ParseException {
+        Date date = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(rq);
+        if (date != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            return sdf.format(date);
+        }
+        return "";
+    }
 
     /**
-     *<pre>
+     * 当前日期时间戳
+     *
+     * @return
+     * @throws ParseException
+     */
+    public static long dateGetTime() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.parse(sdf.format(new Date())).getTime();
+    }
+
+    /**
+     * <pre>
+     * Description  : 字符串转换日期  <br/>
+     * ChangeLog    : 1. 创建 (2020/4/16 0016 14:52 [gaofan]);
+     * @author Administrator
+     * @date 2020/4/16 0016 14:52
+     * </pre>
+     */
+    public static Date stringToDate(String date, String rlqx) throws ParseException {
+        if (date != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat(rlqx);
+            return sdf.parse(date);
+        }
+        return null;
+    }
+
+    /**
+     * <pre>
      * Description  : 利用java原生的类实现SHA256加密  <br/>
      * ChangeLog    : 1. 创建 (2020/4/20 0020 14:00 [gaofan]);
      * @author gaofan
      * @date 2020/4/20 0020 14:00
-     *</pre>
-    */
-    public static String getSHA256(String str){
+     * </pre>
+     */
+    public static String getSHA256(String str) {
         MessageDigest messageDigest;
         String encodestr = "";
         try {
@@ -145,20 +192,21 @@ public  class Util {
         }
         return encodestr;
     }
+
     /**
-     *<pre>
+     * <pre>
      * Description  : 加密算法  <br/>
      * ChangeLog    : 1. 创建 (2020/4/20 0020 14:00 [gaofan]);
      * @author gaofan
      * @date 2020/4/20 0020 14:00
-     *</pre>
-    */
-    private static String byte2Hex(byte[] bytes){
+     * </pre>
+     */
+    private static String byte2Hex(byte[] bytes) {
         StringBuffer stringBuffer = new StringBuffer();
         String temp = null;
-        for (int i=0;i<bytes.length;i++){
+        for (int i = 0; i < bytes.length; i++) {
             temp = Integer.toHexString(bytes[i] & 0xFF);
-            if (temp.length()==1){
+            if (temp.length() == 1) {
                 //1得到一位的进行补0操作
                 stringBuffer.append("0");
             }
@@ -166,9 +214,10 @@ public  class Util {
         }
         return stringBuffer.toString();
     }
-    public static Date newdata(){
-        Date date=new Date();
-        Timestamp timestamp=new Timestamp(date.getTime());
+
+    public static Date newdata() {
+        Date date = new Date();
+        Timestamp timestamp = new Timestamp(date.getTime());
         return timestamp;
     }
 

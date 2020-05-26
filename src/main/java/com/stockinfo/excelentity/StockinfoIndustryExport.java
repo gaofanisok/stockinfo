@@ -12,25 +12,28 @@ import lombok.Data;
 @Data
 @ExcelTarget("StockinfoIndustryExport")
 public class StockinfoIndustryExport {
-    @Excel(name = "名称",orderNum = "1")
+    @Excel(name = "当地股票代码", orderNum = "1")
+    private String ddgpdm;
+
+    @Excel(name = "名称", orderNum = "2")
     private String mc;
 
-    @Excel(name = "概念",orderNum = "2")
+    @Excel(name = "概念", orderNum = "3")
     private String gn;
 
-    @Excel(name = "排行",orderNum = "3")
+    @Excel(name = "排行", orderNum = "4")
     private String ph;
 
-    @Excel(name = "路透评级",orderNum = "4")
+    @Excel(name = "路透评级", orderNum = "5")
     private String ltpj;
 
-    @Excel(name = "流通市值",orderNum = "5")
+    @Excel(name = "流通市值", orderNum = "6")
     private String ltsz;
 
-    @Excel(name = "持仓机构数量",orderNum = "6")
+    @Excel(name = "持仓机构数量", orderNum = "7")
     private String ccjgsl;
 
-    @Excel(name = "类型{非会员填写 0\", \"会员填写1}",orderNum = "7",width = 30)
+    @Excel(name = "类型{非会员填写 0\", \"会员填写1}", orderNum = "8", width = 30)
     private String lx;
 
     public String getMc() {
@@ -87,5 +90,13 @@ public class StockinfoIndustryExport {
 
     public void setLx(String lx) {
         this.lx = lx;
+    }
+
+    public String getDdgpdm() {
+        return ddgpdm;
+    }
+
+    public void setDdgpdm(String ddgpdm) {
+        this.ddgpdm = ddgpdm;
     }
 }

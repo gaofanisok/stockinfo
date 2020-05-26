@@ -38,4 +38,15 @@ public class ExcelController {
         String type=RequestUtil.getString(request,"type");
         excelManager.export(response,type);
     }
+
+    @PostMapping("/importItemExcel")
+    public String importItemExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
+        String type=RequestUtil.getString(request,"type");
+        String state=RequestUtil.getString(request,"state");
+        String res=excelManager.importItemExcel(file,type,state);
+        if (StringUtil.isNotEmpty(res)){
+            return  CommonUtil.toReturnJsonMsg(0, "成功",res);
+        }
+        return  CommonUtil.toReturnJsonMsg(1, "失败",res);
+    }
 }
