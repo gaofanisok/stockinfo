@@ -3,6 +3,10 @@ package com.stockinfo.manager;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
+import cn.hutool.core.lang.Console;
+import cn.hutool.poi.excel.sax.Excel03SaxReader;
+import cn.hutool.poi.excel.sax.Excel07SaxReader;
+import cn.hutool.poi.excel.sax.handler.RowHandler;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.stockinfo.dao.CommunalDao;
 import com.stockinfo.dao.ItemMapper;
@@ -18,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,55 +51,55 @@ public class ExcelManager extends ServiceImpl<ItemMapper, StockInfoItemExport> i
             if (StringUtil.isNotEmpty(type)) {
                 switch (type) {
                     case "1":
-                        String sql = "insert into stockinfo_table values";
+                        StringBuilder sql = new StringBuilder("insert into stockinfo_table values");
                         ExcelImportResult<StockinfoTableExport> result = ExcelImportUtil.importExcelMore(file.getInputStream(), StockinfoTableExport.class, importParams);
                         List<StockinfoTableExport> stockinfoTableExports = result.getList();
-                        if (stockinfoTableExports.size() < 0) {
+                        if (stockinfoTableExports.size() <= 0) {
                             return "";
                         }
                         int i = 0;
                         for (StockinfoTableExport demoExcel : stockinfoTableExports) {
                             i++;
-                            sql += "('" + UUID.randomUUID().toString() + "','" + demoExcel.getMc() + "','" + demoExcel.getGdzjpj() + "','" + demoExcel.getDrbh() + "','" + demoExcel.getWrbh() + "','" + demoExcel.getEsrbh() + "','" + demoExcel.getBzzf() + "','" + demoExcel.getLx() + "','" + Util.newdata() + "','" + demoExcel.getDdgpdm() + "')";
+                            sql.append("('").append(UUID.randomUUID().toString()).append("','").append(demoExcel.getMc()).append("','").append(demoExcel.getGdzjpj()).append("','").append(demoExcel.getDrbh()).append("','").append(demoExcel.getWrbh()).append("','").append(demoExcel.getEsrbh()).append("','").append(demoExcel.getBzzf()).append("','").append(demoExcel.getLx()).append("','").append(Util.newdata()).append("','").append(demoExcel.getDdgpdm()).append("')");
                             if (i < stockinfoTableExports.size()) {
-                                sql += ",";
+                                sql.append(",");
                             }
                         }
-                        communalDao.execute(sql);
+                        communalDao.execute(sql.toString());
                         break;
                     case "3":
-                        String sql2 = "insert into stockinfo_industrytable values";
+                        StringBuilder sql2 = new StringBuilder("insert into stockinfo_industrytable values");
                         ExcelImportResult<StockinfoIndustryExport> result2 = ExcelImportUtil.importExcelMore(file.getInputStream(), StockinfoIndustryExport.class, importParams);
                         List<StockinfoIndustryExport> stockinfoIndustryExportList = result2.getList();
                         int i1 = 0;
-                        if (stockinfoIndustryExportList.size() < 0) {
+                        if (stockinfoIndustryExportList.size() <= 0) {
                             return "";
                         }
                         for (StockinfoIndustryExport demoExcel : stockinfoIndustryExportList) {
                             i1++;
-                            sql2 += "('" + UUID.randomUUID().toString() + "','" + demoExcel.getMc() + "','" + demoExcel.getGn() + "','" + demoExcel.getPh() + "','" + demoExcel.getLtpj() + "','" + demoExcel.getLtsz() + "','" + demoExcel.getCcjgsl() + "','" + demoExcel.getLx() + "','" + Util.newdata() + "','" + demoExcel.getDdgpdm() + "')";
+                            sql2.append("('").append(UUID.randomUUID().toString()).append("','").append(demoExcel.getMc()).append("','").append(demoExcel.getGn()).append("','").append(demoExcel.getPh()).append("','").append(demoExcel.getLtpj()).append("','").append(demoExcel.getLtsz()).append("','").append(demoExcel.getCcjgsl()).append("','").append(demoExcel.getLx()).append("','").append(Util.newdata()).append("','").append(demoExcel.getDdgpdm()).append("')");
                             if (i1 < stockinfoIndustryExportList.size()) {
-                                sql2 += ",";
+                                sql2.append(",");
                             }
                         }
-                        communalDao.execute(sql2);
+                        communalDao.execute(sql2.toString());
                         break;
                     case "2":
-                        String sql3 = "insert into stockinfo_institutionstable values";
+                        StringBuilder sql3 = new StringBuilder("insert into stockinfo_institutionstable values");
                         ExcelImportResult<StockinfoInstitutionsExport> result3 = ExcelImportUtil.importExcelMore(file.getInputStream(), StockinfoIndustryExport.class, importParams);
                         List<StockinfoInstitutionsExport> stockinfoInstitutionsExportList = result3.getList();
                         int i2 = 0;
-                        if (stockinfoInstitutionsExportList.size() < 0) {
+                        if (stockinfoInstitutionsExportList.size() <= 0) {
                             return "";
                         }
                         for (StockinfoInstitutionsExport demoExcel : stockinfoInstitutionsExportList) {
                             i2++;
-                            sql3 += "('" + UUID.randomUUID().toString() + "','" + demoExcel.getMc() + "','" + demoExcel.getLtpj() + "','" + demoExcel.getBsz() + "','" + demoExcel.getQqjgcgsl() + "','" + demoExcel.getBsqbh() + "','" + demoExcel.getZzjds() + "','" + demoExcel.getLx() + "','" + Util.newdata() + "','" + demoExcel.getDdgpdm() + "')";
+                            sql3.append("('").append(UUID.randomUUID().toString()).append("','").append(demoExcel.getMc()).append("','").append(demoExcel.getLtpj()).append("','").append(demoExcel.getBsz()).append("','").append(demoExcel.getQqjgcgsl()).append("','").append(demoExcel.getBsqbh()).append("','").append(demoExcel.getZzjds()).append("','").append(demoExcel.getLx()).append("','").append(Util.newdata()).append("','").append(demoExcel.getDdgpdm()).append("')");
                             if (i2 < stockinfoInstitutionsExportList.size()) {
-                                sql3 += ",";
+                                sql3.append(",");
                             }
                         }
-                        communalDao.execute(sql3);
+                        communalDao.execute(sql3.toString());
                         break;
                     default:
                         break;
@@ -111,30 +117,20 @@ public class ExcelManager extends ServiceImpl<ItemMapper, StockInfoItemExport> i
             // 表头在第几行
             importParams.setTitleRows(1);
             if ("0".equals(state)) {
-                String sql = "insert into stockinfo_item values";
-                ExcelImportResult<StockInfoItemExport> result = ExcelImportUtil.importExcelMore(file.getInputStream(), StockInfoItemExport.class, importParams);
-                List<StockInfoItemExport> stockinfoTableExports = result.getList();
-                for (int i = 0; i < stockinfoTableExports.size(); i++) {
-                    StockInfoItemExport s = stockinfoTableExports.get(i);
-                    sql += "('" + UUID.randomUUID().toString() + "','" + s.getDdgpdm() + "','" + type + "','" + s.getWz1() + "','" + s.getWz2() + "','" + s.getWz3() + "','" + s.getSshy() + "','" + s.getGdjc() + "','" + s.getGqzy() + "'," +
-                            "'" + s.getSy() + "','" + s.getZjyngxl() + "','" + s.getZhpf() + "','" + s.getKsnfmgyjyq() + "','" + s.getYqz1() + "','" + s.getYqbh1() + "','" + s.getJsnfmgyjyq() + "','" + s.getYqz2() + "'," +
-                            "'" + s.getYqbh2() + "','" + s.getZyywdqzzl() + "','" + s.getZyywdqwdx() + "','" + s.getZyywzqzzl() + "','" + s.getZyywcqwdx() + "','" + s.getYi() + "','" + s.getEr() + "','" + s.getSan() + "'," +
-                            "'" + s.getSi() + "','" + s.getWu() + "','" + s.getLiu() + "','" + s.getQi() + "','" + s.getBa() + "','" + s.getJiu() + "','" + s.getShi() + "','" + s.getShiyi() + "','" + s.getShier() + "'" +
-                            ",'" + s.getShisan() + "','" + s.getShisi() + "','" + s.getShiwu() + "','" + s.getShiliu() + "','" + s.getShiqi() + "','" + s.getShiba() + "','" + s.getShijiu() + "'" +
-                            ",'" + s.getErshi() + "','" + s.getErshiyi() + "','" + s.getErshier() + "','" + s.getErshisan() + "','" + s.getErshisi() + "','" + s.getErshiwu() + "','" + s.getErshiliu() + "'," +
-                            "'" + s.getErshiqi() + "','" + s.getErshiba() + "','" + s.getErshijiu() + "','" + s.getSanshi() + "','" + s.getSanshiyi() + "','" + s.getSanshier() + "'" +
-                            ",'" + s.getSanshisan() + "','" + s.getSanshisi() + "','" + s.getSanshiwu() + "','" + s.getSanshiliu() + "','" + s.getSanshiqi() + "','" + s.getSanshiba() + "','" + s.getSanshijiu() + "'," +
-                            "'" + s.getSishi() + "','" + s.getSjksrq() + "','" + s.getSjjsrq() + "','" + s.getDyt() + "','" + s.getDytz() + "','" + s.getDet() + "'" +
-                            ",'" + s.getDetz() + "','" + s.getDst() + "','" + s.getDstz() + "','" + s.getDsit() + "','" + s.getDsitz() + "','" + s.getDwt() + "'" +
-                            ",'" + s.getDwtz() + "','" + s.getHydyt() + "','" + s.getHydytz() + "','" + s.getHydet() + "','" + s.getHydetz() + "','" + s.getHydst() + "','" + s.getHydstz() + "','" + s.getHydsit() + "'" +
-                            ",'" + s.getHydsitz() + "','" + s.getHydwt() + "','" + s.getHydwtz() + "','" + s.getZyyw1() + "','" + s.getZb1() + "','" + s.getZyyw2() + "','" + s.getZb2() + "','" + s.getZyyw3() + "','" + s.getZb3() + "'" +
-                            ",'" + s.getDyjdqrqz() + "','" + s.getDyjdhrqz() + "','" + s.getDejdqrqz() + "','" + s.getDejdhrqz() + "','" + s.getDsjdqrqz() + "','" + s.getDsjdhrqz() + "','" + s.getDsijdqrqz() + "'" +
-                            ",'" + s.getDsijdhrqz() + "','" + s.getQrq() + "','" + s.getHrq() + "','" + LocalDateTime.now() + "')";
-                    if (i < stockinfoTableExports.size() - 1) {
-                        sql += ",";
-                    }
-                }
-                communalDao.execute(sql);
+                List<Object> list=new ArrayList<>();
+                StringBuilder sql = new StringBuilder("insert into stockinfo_item values");
+                Excel03SaxReader reader = new Excel03SaxReader (createRowHandler(type));
+                reader.read(file.getInputStream(), 0);
+//                             ExcelImportResult<StockInfoItemExport> result = ExcelImportUtil.importExcelMore(file.getInputStream(), StockInfoItemExport.class, importParams);
+                //             List<StockInfoItemExport> stockinfoTableExports = result.getList();
+//                for (int i = 0; i < stockinfoTableExports.size(); i++) {
+//                    StockInfoItemExport s = stockinfoTableExports.get(i);
+//                    sql.append("('").append(UUID.randomUUID().toString()).append("','").append(s.getDdgpdm()).append("','").append(type).append("','").append(s.getWz1()).append("','").append(s.getWz2()).append("','").append(s.getWz3()).append("','").append(s.getSshy()).append("','").append(s.getGdjc()).append("','").append(s.getGqzy()).append("',").append("'").append(s.getSy()).append("','").append(s.getZjyngxl()).append("','").append(s.getZhpf()).append("','").append(s.getKsnfmgyjyq()).append("','").append(s.getYqz1()).append("','").append(s.getYqbh1()).append("','").append(s.getJsnfmgyjyq()).append("','").append(s.getYqz2()).append("',").append("'").append(s.getYqbh2()).append("','").append(s.getZyywdqzzl()).append("','").append(s.getZyywdqwdx()).append("','").append(s.getZyywzqzzl()).append("','").append(s.getZyywcqwdx()).append("','").append(s.getYi()).append("','").append(s.getEr()).append("','").append(s.getSan()).append("',").append("'").append(s.getSi()).append("','").append(s.getWu()).append("','").append(s.getLiu()).append("','").append(s.getQi()).append("','").append(s.getBa()).append("','").append(s.getJiu()).append("','").append(s.getShi()).append("','").append(s.getShiyi()).append("','").append(s.getShier()).append("'").append(",'").append(s.getShisan()).append("','").append(s.getShisi()).append("','").append(s.getShiwu()).append("','").append(s.getShiliu()).append("','").append(s.getShiqi()).append("','").append(s.getShiba()).append("','").append(s.getShijiu()).append("'").append(",'").append(s.getErshi()).append("','").append(s.getErshiyi()).append("','").append(s.getErshier()).append("','").append(s.getErshisan()).append("','").append(s.getErshisi()).append("','").append(s.getErshiwu()).append("','").append(s.getErshiliu()).append("',").append("'").append(s.getErshiqi()).append("','").append(s.getErshiba()).append("','").append(s.getErshijiu()).append("','").append(s.getSanshi()).append("','").append(s.getSanshiyi()).append("','").append(s.getSanshier()).append("'").append(",'").append(s.getSanshisan()).append("','").append(s.getSanshisi()).append("','").append(s.getSanshiwu()).append("','").append(s.getSanshiliu()).append("','").append(s.getSanshiqi()).append("','").append(s.getSanshiba()).append("','").append(s.getSanshijiu()).append("',").append("'").append(s.getSishi()).append("','").append(s.getSjksrq()).append("','").append(s.getSjjsrq()).append("','").append(s.getDyt()).append("','").append(s.getDytz()).append("','").append(s.getDet()).append("'").append(",'").append(s.getDetz()).append("','").append(s.getDst()).append("','").append(s.getDstz()).append("','").append(s.getDsit()).append("','").append(s.getDsitz()).append("','").append(s.getDwt()).append("'").append(",'").append(s.getDwtz()).append("','").append(s.getHydyt()).append("','").append(s.getHydytz()).append("','").append(s.getHydet()).append("','").append(s.getHydetz()).append("','").append(s.getHydst()).append("','").append(s.getHydstz()).append("','").append(s.getHydsit()).append("'").append(",'").append(s.getHydsitz()).append("','").append(s.getHydwt()).append("','").append(s.getHydwtz()).append("','").append(s.getZyyw1()).append("','").append(s.getZb1()).append("','").append(s.getZyyw2()).append("','").append(s.getZb2()).append("','").append(s.getZyyw3()).append("','").append(s.getZb3()).append("'").append(",'").append(s.getDyjdqrqz()).append("','").append(s.getDyjdhrqz()).append("','").append(s.getDejdqrqz()).append("','").append(s.getDejdhrqz()).append("','").append(s.getDsjdqrqz()).append("','").append(s.getDsjdhrqz()).append("','").append(s.getDsijdqrqz()).append("'").append(",'").append(s.getDsijdhrqz()).append("','").append(s.getQrq()).append("','").append(s.getHrq()).append("','").append(LocalDateTime.now()).append("')");
+//                    if (i < stockinfoTableExports.size() - 1) {
+//                        sql.append(",");
+//                    }
+//                }
+//                communalDao.execute(sql.toString());
             } else if ("1".equals(state)) {
 
                 ExcelImportResult<StockinfoGsinfo> result = ExcelImportUtil.importExcelMore(file.getInputStream(), StockinfoGsinfo.class, importParams);
@@ -184,12 +180,174 @@ public class ExcelManager extends ServiceImpl<ItemMapper, StockInfoItemExport> i
                 case "4":
                     List<StockInfoItemExport> stockInfoItemExportList = new ArrayList<>();
                     ExcelUtil.exportExcel(stockInfoItemExportList, "详细数据", "详细数据", StockInfoItemExport.class, "详细数据表" + ".xls", response);
+                    break;
                 case "5":
                     List<StockinfoGsinfo> stockinfoGsinfoList = new ArrayList<>();
                     ExcelUtil.exportExcel(stockinfoGsinfoList, "公司详细数据", "公司详细数据", StockinfoGsinfo.class, "详细数据表" + ".xls", response);
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+
+    private RowHandler createRowHandler(String type) {
+        return  new RowHandler() {
+            List<StockInfoItemExport> stockInfoItemExports=new ArrayList<>();
+            @Override
+            public void handle(int sheetIndex, int rowIndex, List<Object> rowList) {
+                StockInfoItemExport stockInfoItemExport=new StockInfoItemExport();
+                if (rowIndex!=0 && rowIndex !=1){
+                    stockInfoItemExport.setId(UUID.randomUUID().toString());
+                    stockInfoItemExport.setType(type);
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setWz1(String.valueOf(rowList.get(1)));
+                    stockInfoItemExport.setWz2(String.valueOf(rowList.get(2)));
+                    stockInfoItemExport.setWz3(String.valueOf(rowList.get(3)));
+                    stockInfoItemExport.setSshy(String.valueOf(rowList.get(4)));
+                    stockInfoItemExport.setGdjc(String.valueOf(rowList.get(5)));
+                    stockInfoItemExport.setGqzy(String.valueOf(rowList.get(6)));
+                    stockInfoItemExport.setSy(String.valueOf(rowList.get(7)));
+                    stockInfoItemExport.setZjyngxl(String.valueOf(rowList.get(8)));
+                    stockInfoItemExport.setZhpf(String.valueOf(rowList.get(9)));
+                    stockInfoItemExport.setKsnfmgyjyq(String.valueOf(rowList.get(10)));
+                    stockInfoItemExport.setYqz1(String.valueOf(rowList.get(11)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+                    stockInfoItemExport.setDdgpdm(String.valueOf(rowList.get(0)));
+
+
+                }
+                Console.log("[{}] [{}] {}", sheetIndex, rowIndex, rowList);
+                Console.log(rowIndex);
+            }
+        };
     }
 }
