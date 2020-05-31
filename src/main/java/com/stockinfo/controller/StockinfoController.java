@@ -1,7 +1,6 @@
 package com.stockinfo.controller;
 
 import com.stockinfo.manager.StockinfoManager;
-import com.stockinfo.manager.UserManager;
 import com.stockinfo.util.CommonUtil;
 import com.stockinfo.util.RequestUtil;
 import com.stockinfo.util.StringUtil;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * @Auther: gaofan
@@ -233,6 +231,30 @@ public class StockinfoController {
     }
 
     /**
+     * 删除收藏
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("delColleect")
+    public String delColleect(HttpServletRequest request) {
+        try {
+            String id = RequestUtil.getString(request, "id");
+            String stockinfo = stockinfoManager.delColleect(id);
+            if (StringUtil.isNotEmpty(stockinfo)) {
+                return CommonUtil.toReturnJsonMsg(0, "取消收藏成功", stockinfo);
+            } else {
+                return CommonUtil.toReturnJsonMsg(1, "数据错误：获取数据失败！");
+            }
+        } catch (Exception e) {
+            logger.error(e);
+            e.printStackTrace();
+        }
+        return CommonUtil.toReturnJsonMsg(-1, "系统繁忙，请重试");
+    }
+
+
+    /**
      * <pre>
      * Description  :删除所有 <br/>
      * ChangeLog    : 1. 创建 (2020/4/21 0021 14:47 [gaofan]);
@@ -412,6 +434,7 @@ public class StockinfoController {
 
     /**
      * 删除留言
+     *
      * @param request
      * @return
      */
@@ -434,6 +457,7 @@ public class StockinfoController {
 
     /**
      * 点赞或取消点赞
+     *
      * @param request
      * @param openId
      * @return
@@ -457,6 +481,7 @@ public class StockinfoController {
 
     /**
      * 数据详细
+     *
      * @param request
      * @param openId
      * @return
@@ -466,7 +491,7 @@ public class StockinfoController {
         try {
             String type = RequestUtil.getString(request, "type");
             String gpdm = RequestUtil.getString(request, "gpdm");
-            String praise = stockinfoManager.StockinfoDetailed(type, gpdm);
+            String praise = stockinfoManager.StockinfoDetailed(type, gpdm, openId);
             if (StringUtil.isNotEmpty(praise)) {
                 return CommonUtil.toReturnJsonMsg(0, "成功", praise);
             } else {

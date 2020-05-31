@@ -12,6 +12,7 @@ import lombok.Data;
 @Data
 @ExcelTarget("StockinfoTableExport")
 public class StockinfoTableExport {
+    private String id;
     @Excel(name = "当地股票代码", orderNum = "1")
     private String ddgpdm;
 

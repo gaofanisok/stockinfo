@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.beans.Transient;
 import java.text.ParseException;
 import java.util.*;
 
@@ -116,7 +115,7 @@ public class StockinfoManager {
         JSONObject jsRestu = new JSONObject();
         JSONArray ja = new JSONArray();
         if (StringUtil.isNotEmpty(mc)) {
-            sql += " and mc like '%" + mc + "%' ";
+            sql += " and (mc like '%" + mc + "%' or gn like '%" + mc + "%') ";
         }
         sql += " order by creationtime desc";
         PageInfo<Map<String, Object>> pageList = PageUtil.PageQuery(communalDao.queryPage(sql));
@@ -278,10 +277,10 @@ public class StockinfoManager {
             String sql = "";
             //type:0:stockinfo_table,1:stockinfo_institutionstable
             if ("0".equals(type)) {
-                sql = "select b.*,a.lx type from stockinfo_collect as a left join stockinfo_table as b on a.scid=b.id_ where a.userid='" + map.getOrDefault("user_id", "") + "' and a.lx='" + type + "'";
+                sql = "select b.*,a.lx type,a.id scid  from stockinfo_collect as a left join stockinfo_table as b on a.scid=b.id_ where a.userid='" + map.getOrDefault("user_id", "") + "' and a.lx='" + type + "'";
             }
             if ("1".equals(type)) {
-                sql = "select b.*,a.lx type from stockinfo_collect as a left join stockinfo_institutionstable as b on a.scid=b.id_ where a.userid='" + map.getOrDefault("user_id", "") + "' and a.lx='" + type + "'";
+                sql = "select b.*,a.lx type,a.id scid  from stockinfo_collect as a left join stockinfo_institutionstable as b on a.scid=b.id_ where a.userid='" + map.getOrDefault("user_id", "") + "' and a.lx='" + type + "'";
             }
             if (StringUtil.isNotEmpty(mc)) {
                 sql += " and ( b.mc like '%" + mc + "%' or b.ddgpdm like '%" + mc + "%')";
@@ -295,6 +294,20 @@ public class StockinfoManager {
             jo.put("data", pageList.getList());
             jo.put("total", pageList.getTotal());
             return jo.toString();
+        }
+        return "";
+    }
+
+    /**
+     * 删除收藏
+     * @param id
+     * @return
+     */
+    public String delColleect(String id) {
+        if (StringUtil.isNotEmpty(id)) {
+            String sql = "delete from stockinfo_collect where id='" + id + "'";
+            communalDao.execute(sql);
+            return "1";
         }
         return "";
     }
@@ -327,8 +340,8 @@ public class StockinfoManager {
                             break;
                         case "1":
                             sql = delsql("stockinfo_table", "1", "");
-                            desql += "where ddgpdm in(select ddgpdm from stockinfo_table where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')') and type='1'";
-                            desql2 += "where ddgpdm in(select ddgpdm from stockinfo_table where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')') and type='1'";
+                            desql += "where ddgpdm in(select ddgpdm from stockinfo_table where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')) and type='1'";
+                            desql2 += "where ddgpdm in(select ddgpdm from stockinfo_table where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')) and type='1'";
                             break;
                     }
                     break;
@@ -343,8 +356,8 @@ public class StockinfoManager {
                             break;
                         case "1":
                             sql = delsql("stockinfo_industrytable", "1", "");
-                            desql += "where ddgpdm in(select ddgpdm from stockinfo_industrytable where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')') and type='3'";
-                            desql2 += "where ddgpdm in(select ddgpdm from stockinfo_industrytable where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')') and type='3'";
+                            desql += "where ddgpdm in(select ddgpdm from stockinfo_industrytable where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')) and type='3'";
+                            desql2 += "where ddgpdm in(select ddgpdm from stockinfo_industrytable where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')) and type='3'";
                             break;
                     }
                     break;
@@ -359,8 +372,8 @@ public class StockinfoManager {
                             break;
                         case "1":
                             sql = delsql("stockinfo_institutionstable", "1", "");
-                            desql += "where ddgpdm in(select ddgpdm from stockinfo_institutionstable where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')') and type='2'";
-                            desql2 += "where ddgpdm in(select ddgpdm from stockinfo_institutionstable where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')') and type='2'";
+                            desql += "where ddgpdm in(select ddgpdm from stockinfo_institutionstable where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')) and type='2'";
+                            desql2 += "where ddgpdm in(select ddgpdm from stockinfo_institutionstable where  DATE_FORMAT(creationtime,'%Y-%m-%d')=DATE_FORMAT('" + Util.newdata() + "','%Y-%m-%d')) and type='2'";
                             communalDao.execute(desql);
                             break;
                     }
@@ -442,12 +455,12 @@ public class StockinfoManager {
     public String infoList(String form, String type, int pageIndex, int pageSize, String column, String orderBy, String cxcolumn, String cxlr) {
         PageHelper.startPage(pageIndex, pageSize);
         JSONObject jsonObject = new JSONObject();
-        String sql = "select * from " + form + " where 1=1";
+        String sql = "select * from " + form + " where 1=1 ";
         if ("0".equals(type)) {
             sql += " and lx='0'";
         }
         if (!cxlr.isEmpty()) {
-            sql += "and ( mc like '%" + cxlr + "%' or ddgpdm like '%" + cxlr + "%')";
+            sql += " and ( mc like '%" + cxlr + "%' or ddgpdm like '%" + cxlr + "%')";
         }
         if (!column.isEmpty() && !orderBy.isEmpty()) {
             sql += ordrBy(column, orderBy);
@@ -492,7 +505,7 @@ public class StockinfoManager {
     public String replycomments(String userId, String userName, String content, String commentId) {
         if (StringUtil.isNotEmpty(userId)) {
             String id = UUID.randomUUID().toString();
-            String sql = "insert into stockinfo_comments value('" + id + "','" + commentId + "','" + userId + "','" + content + "','" + userName + "','" + Util.newdata() + "')";
+            String sql = "insert into stockinfo_comments value('" + id + "','" + commentId + "','" + userId + "','" + content + "','" + userName + "','" + Util.newdata() + "','','0')";
             communalDao.execute(sql);
             return id;
         }
@@ -653,8 +666,8 @@ public class StockinfoManager {
      * @param gpdm
      * @return
      */
-    public String StockinfoDetailed(String type, String gpdm) {
-        if (StringUtil.isNotEmpty(type) && StringUtil.isNotEmpty(gpdm)) {
+    public String StockinfoDetailed(String type, String gpdm,String openId) {
+        if (StringUtil.isNotEmpty(type) && StringUtil.isNotEmpty(gpdm) && StringUtil.isNotEmpty(openId)) {
             JSONObject jb = new JSONObject();
             JSONArray jbxx = new JSONArray();
             JSONArray qyzb = new JSONArray();
@@ -665,7 +678,20 @@ public class StockinfoManager {
             JSONArray tzhb = new JSONArray();
             JSONArray gsxx = new JSONArray();
             List<Map<String, Object>> detailedList = communalDao.query("select * from stockinfo_item where ddgpdm='" + gpdm + "' and type='" + type + "'");
-            List<Map<String, Object>> gsList = communalDao.query("select * from stockinfo_gsinfo where ddgpdm='" + gpdm + "' and type='" + type + "'");
+            List<Map<String, Object>> gsList = communalDao.query("select * from stockinfo_gsinfo where ddgpdm='" + gpdm + "' and type='" + type + "' ORDER BY  date_format(rq, '%Y-%m-%d') ");
+            Map map = userManager.getOpenIdUser(openId);
+            String sql="";
+            if ("1".equals(type)){
+                sql="select id from stockinfo_collect where scid=(select id_ from stockinfo_table where ddgpdm='"+gpdm+"') and userid='"+map.get("user_id")+"'";
+            }else if ("2".equals(type)){
+                sql="select id from stockinfo_collect where scid=(select id_ from stockinfo_institutionstable where ddgpdm='"+gpdm+"') and userid='"+map.get("user_id")+"'";
+            }
+            List<Map<String, Object>> scList = communalDao.query(sql);
+            if (scList.size()>0){
+                jb.put("scid",scList.get(0).get("id"));
+            }else {
+                jb.put("scid","");
+            }
             if (detailedList.size() > 0) {
                 detailedList.forEach(any -> {
                     Map<String, Object> jbxxmap = new HashMap<>();
@@ -686,7 +712,6 @@ public class StockinfoManager {
                     qyzbmap.put("jsnfmgyjyq", any.getOrDefault("jsnfmgyjyq", ""));
                     qyzbmap.put("yqz2", any.getOrDefault("yqz2", ""));
                     qyzbmap.put("yqbh2", any.getOrDefault("yqbh2", ""));
-                    qyzbmap.put("yqz2", any.getOrDefault("yqz2", ""));
                     qyzbmap.put("zyywdqzzl", any.getOrDefault("zyywdqzzl", ""));
                     qyzbmap.put("zyywdqwdx", any.getOrDefault("zyywdqwdx", ""));
                     qyzbmap.put("zyywzqzzl", any.getOrDefault("zyywzqzzl", ""));

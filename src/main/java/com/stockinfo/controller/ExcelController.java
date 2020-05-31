@@ -25,7 +25,7 @@ public class ExcelController {
     private ExcelManager excelManager;
 
     @PostMapping("/single")
-    public String importExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    public String importExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
         String type=RequestUtil.getString(request,"type");
         String res=excelManager.importExcel(file,type);
         if (StringUtil.isNotEmpty(res)){

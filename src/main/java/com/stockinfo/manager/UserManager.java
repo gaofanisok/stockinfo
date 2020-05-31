@@ -207,7 +207,11 @@ public class UserManager {
      * @return map
      */
     public Map getOpenIdUser(String openId) {
-        Map map = communalDao.query("select * from stockinfo_userprogram where user_openid='" + openId + "'").get(0);
+        List<Map<String, Object>> userList = communalDao.query("select * from stockinfo_userprogram where user_openid='" + openId + "'");
+        if (userList.size() <= 0) {
+            throw new IllegalArgumentException("用户未授权或授权过期请重新授权");
+        }
+        Map map = userList.get(0);
         return map;
     }
 }

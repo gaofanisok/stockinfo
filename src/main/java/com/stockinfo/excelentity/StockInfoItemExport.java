@@ -35,9 +35,9 @@ public class StockInfoItemExport implements Serializable {
     private String gqzy;
     @Excel(name = "商誉", orderNum = "8")
     private String sy;
-    @Excel(name = "最近一年股息率", orderNum = "9")
+    @Excel(name = "阿尔法值", orderNum = "9")
     private String zjyngxl;
-    @Excel(name = "综合评分", orderNum = "10")
+    @Excel(name = "年度综合评分", orderNum = "10")
     private String zhpf;
 
     @Excel(name = "开始年份每股业绩预期名称 (如2019年每股业绩预期)", orderNum = "11",width = 30)
@@ -58,7 +58,7 @@ public class StockInfoItemExport implements Serializable {
     private String zyywdqwdx;
     @Excel(name = "主营业务中期增长率", orderNum = "19")
     private String zyywzqzzl;
-    @Excel(name = "主营业务长期稳定率", orderNum = "20")
+    @Excel(name = "主营业务长期稳定性", orderNum = "20")
     private String zyywcqwdx;
 
     @Excel(name = "第一日", orderNum = "21")

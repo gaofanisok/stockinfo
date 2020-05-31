@@ -130,6 +130,7 @@ public class Util {
 
     /**
      * 将日期型字符串Tue Oct 01 00:00:00 CST 2019转换为字符串
+     *
      * @param rq
      * @return
      * @throws ParseException
@@ -216,9 +217,9 @@ public class Util {
     }
 
     public static Date newdata() {
+        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
-        Timestamp timestamp = new Timestamp(date.getTime());
-        return timestamp;
+        return Timestamp.valueOf(simpleDate.format(date));
     }
 
 }

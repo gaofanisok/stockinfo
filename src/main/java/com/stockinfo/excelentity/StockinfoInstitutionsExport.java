@@ -10,28 +10,29 @@ import lombok.Data;
  */
 @Data
 public class StockinfoInstitutionsExport {
+    private String id;
     @Excel(name = "当地股票代码", orderNum = "1")
     private String ddgpdm;
 
-    @Excel(name = "名称",orderNum="2")
+    @Excel(name = "名称", orderNum = "2")
     private String mc;
 
-    @Excel(name = "路透评级",orderNum="3")
+    @Excel(name = "路透评级", orderNum = "3")
     private String ltpj;
 
-    @Excel(name = "比上周",orderNum="4")
+    @Excel(name = "比上周", orderNum = "4")
     private String bsz;
 
-    @Excel(name = "全球机构持股数量",orderNum="5")
+    @Excel(name = "全球机构持股数量", orderNum = "5")
     private String qqjgcgsl;
 
-    @Excel(name = "比上期变化",orderNum="6")
+    @Excel(name = "比上期变化", orderNum = "6")
     private String bsqbh;
 
-    @Excel(name = "增长季度数",orderNum="7")
+    @Excel(name = "增长季度数", orderNum = "7")
     private String zzjds;
 
-    @Excel(name = "类型{非会员填写 0\", \"会员填写1}",orderNum = "8",width = 30)
+    @Excel(name = "类型{非会员填写 0\", \"会员填写1}", orderNum = "8", width = 30)
     private String lx;
 
     public String getLx() {
