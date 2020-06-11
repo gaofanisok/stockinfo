@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.stockinfo.dao.CommunalDao;
+import com.stockinfo.dao.DzMapper;
 import com.stockinfo.util.*;
 import net.sf.json.JSONArray;
 import org.apache.commons.logging.Log;
@@ -28,8 +29,10 @@ public class UserManager {
 
     @Resource
     CommunalDao communalDao;
-    private final String appId = "wx85d33e1b9448e2b2";
-    private final static String secret = "42b7f7e6171a6e2801430f0b769822b9";
+    @Resource
+    DzMapper dzMapper;
+    private final String appId = "wxb7137856ad4e3fa5";
+    private final static String secret = "79d04d17658d4e1ab720b374dd371ecc";
     private final static String requestUrl = "https://api.weixin.qq.com/sns/jscode2session";
     private final static String grant_type = "authorization_code";
 
@@ -51,7 +54,7 @@ public class UserManager {
         JSONArray ja = new JSONArray();
         String sql = "Select * FROM stockinfo_userprogram  ";
         if (StringUtil.isNotEmpty(name)) {
-            sql += " where user_name like' %" + name + " &'";
+            sql += " where user_name like '%" + name + "%'";
         }
         sql += " order by creationtime desc";
         PageInfo<Map<String, Object>> pageList = PageUtil.PageQuery(communalDao.queryPage(sql));
@@ -70,12 +73,9 @@ public class UserManager {
                 js2.put("creationtime", Util.dateToString(maps.getOrDefault("creationtime", "") + "", "yyyy-MM-dd HH:mm:ss"));
                 ja.add(js2);
             }
-
-            js.put("data", ja);
-            js.put("total", pageList.getTotal());
-            return js.toString();
         }
-
+        js.put("data", ja);
+        js.put("total", pageList.getTotal());
         return js.toString();
     }
 
@@ -87,19 +87,28 @@ public class UserManager {
      * @date 2020/4/20 0020 17:18
      * </pre>
      */
-    public String getUserByid(String id) throws ParseException {
-        String sql = "select * from stockinfo_userprogram where ID_='" + id + "'";
+    public String getUserByid(String openId) throws ParseException {
+        String sql = "select * from stockinfo_userprogram where user_openid='" + openId + "'";
         List<Map<String, Object>> userList = communalDao.query(sql);
         if (userList.size() > 0) {
+            String lx = "";
             JSONObject jo = new JSONObject();
             Map<String, Object> map = userList.get(0);
             jo.put("user_id", map.getOrDefault("user_id", ""));
             jo.put("user_name", map.getOrDefault("user_name", ""));
             jo.put("user_openid", map.getOrDefault("user_openid", "") + "");
+            jo.put("user_tx", map.getOrDefault("user_tx", ""));
             jo.put("user_sex", "1".equals(map.getOrDefault("user_sex", "") + "") ? "男" : "女");
             jo.put("starttime", Util.dateToString(map.getOrDefault("starttime", "") + "", "yyyy-MM-dd"));
             jo.put("endtime", Util.dateToString(map.getOrDefault("endtime", "") + "", "yyyy-MM-dd"));
-            jo.put("user_type", map.getOrDefault("user_type", "") + "");
+            long newDate = Util.dateGetTime();
+            long endDate = Util.stringToDate(map.getOrDefault("endtime", "2000-01-01") + "", "yyyy-MM-dd").getTime();
+            if (endDate >= newDate) {
+                lx = "1";
+            } else {
+                lx = "0";
+            }
+            jo.put("user_type", lx);
             jo.put("creationtime", Util.dateToString(map.getOrDefault("creationtime", "") + "", "yyyy-MM-dd HH:mm:ss"));
             return jo.toString();
         }
@@ -124,6 +133,21 @@ public class UserManager {
                 return id;
             }
 
+        }
+        return "";
+    }
+
+    /**
+     * 修改用户头像
+     *
+     * @param tx
+     * @param openid
+     * @return
+     */
+    public String upUserTx(String tx, String openid) {
+        if (StringUtil.isNotEmpty(tx)) {
+            communalDao.execute("update stockinfo_userprogram set user_tx='" + tx + "' where user_openid='" + openid + "' ");
+            return "1";
         }
         return "";
     }

@@ -277,10 +277,10 @@ public class StockinfoManager {
             String sql = "";
             //type:0:stockinfo_table,1:stockinfo_institutionstable
             if ("0".equals(type)) {
-                sql = "select b.*,a.lx type,a.id scid  from stockinfo_collect as a left join stockinfo_table as b on a.scid=b.id_ where a.userid='" + map.getOrDefault("user_id", "") + "' and a.lx='" + type + "'";
+                sql = "select b.*,a.lx type,a.id scid  from  stockinfo_table as b left join stockinfo_collect as a on a.scid=b.id_ where a.userid='" + map.getOrDefault("user_id", "") + "' and a.lx='" + type + "'";
             }
             if ("1".equals(type)) {
-                sql = "select b.*,a.lx type,a.id scid  from stockinfo_collect as a left join stockinfo_institutionstable as b on a.scid=b.id_ where a.userid='" + map.getOrDefault("user_id", "") + "' and a.lx='" + type + "'";
+                sql = "select b.*,a.lx type,a.id scid  from  stockinfo_institutionstable  as b left join stockinfo_collect as a on a.scid=b.id_ where a.userid='" + map.getOrDefault("user_id", "") + "' and a.lx='" + type + "'";
             }
             if (StringUtil.isNotEmpty(mc)) {
                 sql += " and ( b.mc like '%" + mc + "%' or b.ddgpdm like '%" + mc + "%')";
@@ -300,6 +300,7 @@ public class StockinfoManager {
 
     /**
      * 删除收藏
+     *
      * @param id
      * @return
      */
@@ -432,11 +433,11 @@ public class StockinfoManager {
             }
             switch (type) {
                 case "0":
-                    return infoList("stockinfo_table", lx, pageIndex, pageSize, column, orderBy, cxcolumn, cxlr);
+                    return infoList("stockinfo_table", lx, pageIndex, pageSize, column, orderBy, "0", cxlr);
                 case "1":
-                    return infoList("stockinfo_institutionstable", lx, pageIndex, pageSize, column, orderBy, cxcolumn, cxlr);
+                    return infoList("stockinfo_institutionstable", lx, pageIndex, pageSize, column, orderBy, "1", cxlr);
                 case "2":
-                    return infoList("stockinfo_industrytable", lx, pageIndex, pageSize, column, orderBy, cxcolumn, cxlr);
+                    return infoList("stockinfo_industrytable", lx, pageIndex, pageSize, column, orderBy, "2", cxlr);
                 default:
                     return "";
             }
@@ -459,8 +460,10 @@ public class StockinfoManager {
         if ("0".equals(type)) {
             sql += " and lx='0'";
         }
-        if (!cxlr.isEmpty()) {
+        if (!cxlr.isEmpty() && !"2".equals(cxcolumn)) {
             sql += " and ( mc like '%" + cxlr + "%' or ddgpdm like '%" + cxlr + "%')";
+        } else if (!cxlr.isEmpty() && "2".equals(cxcolumn)) {
+            sql += " and ( mc like '%" + cxlr + "%' or ddgpdm like '%" + cxlr + "%' or gn like '%" + cxlr + "%')";
         }
         if (!column.isEmpty() && !orderBy.isEmpty()) {
             sql += ordrBy(column, orderBy);
@@ -666,7 +669,7 @@ public class StockinfoManager {
      * @param gpdm
      * @return
      */
-    public String StockinfoDetailed(String type, String gpdm,String openId) {
+    public String StockinfoDetailed(String type, String gpdm, String openId) {
         if (StringUtil.isNotEmpty(type) && StringUtil.isNotEmpty(gpdm) && StringUtil.isNotEmpty(openId)) {
             JSONObject jb = new JSONObject();
             JSONArray jbxx = new JSONArray();
@@ -680,17 +683,19 @@ public class StockinfoManager {
             List<Map<String, Object>> detailedList = communalDao.query("select * from stockinfo_item where ddgpdm='" + gpdm + "' and type='" + type + "'");
             List<Map<String, Object>> gsList = communalDao.query("select * from stockinfo_gsinfo where ddgpdm='" + gpdm + "' and type='" + type + "' ORDER BY  date_format(rq, '%Y-%m-%d') ");
             Map map = userManager.getOpenIdUser(openId);
-            String sql="";
-            if ("1".equals(type)){
-                sql="select id from stockinfo_collect where scid=(select id_ from stockinfo_table where ddgpdm='"+gpdm+"') and userid='"+map.get("user_id")+"'";
-            }else if ("2".equals(type)){
-                sql="select id from stockinfo_collect where scid=(select id_ from stockinfo_institutionstable where ddgpdm='"+gpdm+"') and userid='"+map.get("user_id")+"'";
+            List<Map<String, Object>> scList = new ArrayList<>();
+            String sql = "";
+            if ("1".equals(type)) {
+                sql = "select id from stockinfo_collect where scid=(select id_ from stockinfo_table where ddgpdm='" + gpdm + "') and userid='" + map.get("user_id") + "'";
+                scList = communalDao.query(sql);
+            } else if ("2".equals(type)) {
+                sql = "select id from stockinfo_collect where scid=(select id_ from stockinfo_institutionstable where ddgpdm='" + gpdm + "') and userid='" + map.get("user_id") + "'";
+                scList = communalDao.query(sql);
             }
-            List<Map<String, Object>> scList = communalDao.query(sql);
-            if (scList.size()>0){
-                jb.put("scid",scList.get(0).get("id"));
-            }else {
-                jb.put("scid","");
+            if (scList.size() > 0) {
+                jb.put("scid", scList.get(0).get("id"));
+            } else {
+                jb.put("scid", "");
             }
             if (detailedList.size() > 0) {
                 detailedList.forEach(any -> {
